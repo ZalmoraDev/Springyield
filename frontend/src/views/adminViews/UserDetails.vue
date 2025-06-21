@@ -51,7 +51,7 @@ const fetchUserDetails = async () => {
         // Initialize editableUser when user data is fetched
         editableUser.value = JSON.parse(JSON.stringify(foundUser)) // Deep copy
       } else {
-        error.value = 'models.com.stefvisser.springyield.User not found'
+        error.value = 'User not found'
       }
     }
   } catch (err) {
@@ -121,7 +121,7 @@ const saveChanges = async () => {
     });
 
     // Update successful
-    toastMessage.value = 'models.com.stefvisser.springyield.User details updated successfully';
+    toastMessage.value = 'User details updated successfully';
     showToast.value = true;
     isEditing.value = false;
 
@@ -152,7 +152,7 @@ const openDeleteModalHandler = () => { // Renamed to avoid conflict if a variabl
   if (user.value) { // Ensure user is loaded before trying to delete
     showDeleteModal.value = true
   } else {
-    toastMessage.value = 'models.com.stefvisser.springyield.User data not loaded yet. Cannot open delete modal.';
+    toastMessage.value = 'User data not loaded yet. Cannot open delete modal.';
     showToast.value = true;
     setTimeout(() => showToast.value = false, 3000);
   }
@@ -163,7 +163,7 @@ const closeDeleteModalHandler = () => {
 }
 
 const handleUserDeletionSuccess = (deletedUser) => {
-  toastMessage.value = `models.com.stefvisser.springyield.User ${deletedUser.firstName} ${deletedUser.lastName} deleted successfully!`
+  toastMessage.value = `User ${deletedUser.firstName} ${deletedUser.lastName} deleted successfully!`
   showToast.value = true
   closeDeleteModalHandler()
   setTimeout(() => {
@@ -185,7 +185,7 @@ const openApproveModalHandler = () => { // Renamed
   if (user.value) { // Ensure user is loaded
     showApproveModal.value = true
   } else {
-    toastMessage.value = 'models.com.stefvisser.springyield.User data not loaded yet. Cannot open approve modal.';
+    toastMessage.value = 'User data not loaded yet. Cannot open approve modal.';
     showToast.value = true
     setTimeout(() => showToast.value = false, 3000);
   }
@@ -196,7 +196,7 @@ const closeApproveModalHandler = () => {
 }
 
 const handleUserApprovalSuccess = (approvedUser) => {
-  toastMessage.value = `models.com.stefvisser.springyield.User ${approvedUser.firstName} ${approvedUser.lastName} approved successfully!`
+  toastMessage.value = `User ${approvedUser.firstName} ${approvedUser.lastName} approved successfully!`
   showToast.value = true
   fetchUserDetails() // Refresh user details
   closeApproveModalHandler()
@@ -253,16 +253,16 @@ watch(() => route.params.userId, (newUserId, oldUserId) => {
                  alt="Back-arrow Icon">Back to Users
           </button>
           <div class="flex gap-2">
-            <!-- Edit models.com.stefvisser.springyield.User button - visible when not in edit mode -->
+            <!-- Edit User button - visible when not in edit mode -->
             <button v-if="!isEditing && (role === 'EMPLOYEE' || role === 'ADMIN') && user"
                     @click="toggleEditMode"
                     class="flex gap-2 items-center px-4 py-2 rounded-2xl text-white bg-blue-500 hover:bg-blue-600 font-bold border-gray-300 border cursor-pointer"
             >
               <img
                   src="/edit_24dp_FFF.svg"
-                  alt="Edit models.com.stefvisser.springyield.User Icon"
+                  alt="Edit User Icon"
                   class="w-5 h-5 flex-shrink-0">
-              Edit models.com.stefvisser.springyield.User
+              Edit User
             </button>
 
             <!-- Save button - visible when in edit mode -->
@@ -272,7 +272,7 @@ watch(() => route.params.userId, (newUserId, oldUserId) => {
             >
               <img
                   src="/edit_24dp_FFF.svg"
-                  alt="Save Editing models.com.stefvisser.springyield.User Icon"
+                  alt="Save Editing User Icon"
                   class="w-5 h-5 flex-shrink-0">
               Save Changes
             </button>
@@ -284,7 +284,7 @@ watch(() => route.params.userId, (newUserId, oldUserId) => {
             >
               <img
                   src="/cancel_24dp_000.svg"
-                  alt="Cancel Editing models.com.stefvisser.springyield.User Icon"
+                  alt="Cancel Editing User Icon"
                   class="w-5 h-5 flex-shrink-0">
               Discard Changes
             </button>
@@ -296,9 +296,9 @@ watch(() => route.params.userId, (newUserId, oldUserId) => {
             >
               <img
                   src="/delete_24dp_FFF.svg"
-                  alt="Delete models.com.stefvisser.springyield.User Icon"
+                  alt="Delete User Icon"
                   class="w-5 h-5 flex-shrink-0">
-              Delete models.com.stefvisser.springyield.User
+              Delete User
             </button>
 
             <!-- Approve button - only visible when not in edit mode and for unapproved users -->
@@ -308,9 +308,9 @@ watch(() => route.params.userId, (newUserId, oldUserId) => {
             >
               <img
                   src="/check_24dp_FFF.svg"
-                  alt="Approve models.com.stefvisser.springyield.User Icon"
+                  alt="Approve User Icon"
                   class="w-5 h-5 flex-shrink-0">
-              Approve models.com.stefvisser.springyield.User
+              Approve User
             </button>
           </div>
         </div>
@@ -325,7 +325,7 @@ watch(() => route.params.userId, (newUserId, oldUserId) => {
       </div>
 
       <div v-else-if="user && editableUser" class="bg-white rounded-lg shadow p-6 overflow-hidden">
-        <h1 class="text-2xl font-bold mb-6">models.com.stefvisser.springyield.User Details</h1>
+        <h1 class="text-2xl font-bold mb-6">User Details</h1>
         <div class="space-y-4">
           <div class="grid grid-cols-2 gap-4">
             <div>

@@ -1,4 +1,4 @@
-@import "tailwindcss"; /* From https://tailwindcss.com/docs/installation/tailwind-cli */
+@import "lib.d.mts"; /* From https://tailwindcss.com/docs/installation/tailwind-cli */
 @tailwind utilities;
 
 /* ---------- Custom Tailwind CSS ---------- */

@@ -21,6 +21,9 @@ services:
     restart: always
     expose:
       - "5173"  # internal only, not published to host
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
 
   springboot:
     container_name: springyield-springboot

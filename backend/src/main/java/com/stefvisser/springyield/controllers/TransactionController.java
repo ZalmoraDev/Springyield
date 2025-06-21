@@ -304,7 +304,7 @@ public class TransactionController {
         }
 
         // Retrieve the special ATM user by email
-        User executingUser = userService.getUserByEmail("atms@springyield.nl");
+        User executingUser = userService.getUserByEmail("atms@springyield.com");
 
         // If the ATM user does not exist, return 403
         if (executingUser == null) {

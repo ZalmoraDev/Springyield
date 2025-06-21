@@ -27,9 +27,10 @@ public class WebConfig {
 
         // Allow the frontend URL that's defined in application.properties
         config.addAllowedOrigin("http://" + frontendIp + ":" + frontendPort);
-        config.addAllowedOrigin("https://springyield.nl"); // Allow the production URL
-        config.addAllowedOrigin("https://www.springyield.nl"); // Allow the production URL with www
-        config.addAllowedOrigin("https://api.springyield.nl"); // Allow the production URL with www
+        config.addAllowedOrigin("https://springyield.stefvisser.com"); // Allow the production URL
+        config.addAllowedOrigin("https://www.springyield.stefvisser.com"); // Allow the production URL with www
+        config.addAllowedOrigin("https://api.springyield.stefvisser.com"); // Allow the production URL with www
+        config.addAllowedOrigin("http://localhost:20300"); // Allow local development
 
         // Allow common HTTP methods
         config.addAllowedMethod("GET");

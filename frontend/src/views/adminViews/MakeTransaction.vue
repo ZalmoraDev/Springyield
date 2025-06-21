@@ -61,7 +61,7 @@ const toggleToAddressBook = () => {
   showFromAddressBook.value = false; // Close the other one
 };
 
-// models.com.stefvisser.springyield.Account selection handlers
+// Account selection handlers
 const selectFromAccount = async (contact) => {
   transactionForm.value.fromAccount = contact.iban;
   showFromAddressBook.value = false;
@@ -87,7 +87,7 @@ const handleTransactionSubmit = async () => {
 
   // Basic validation
   if (!transactionForm.value.fromAccount || !transactionForm.value.toAccount || !transactionForm.value.transferAmount) {
-    errorMessage.value = 'Please fill in all required fields: From models.com.stefvisser.springyield.Account, To models.com.stefvisser.springyield.Account, and Amount.';
+    errorMessage.value = 'Please fill in all required fields: From Account, To Account, and Amount.';
     isSubmitting.value = false;
     return;
   }
@@ -127,7 +127,7 @@ const handleTransactionSubmit = async () => {
 
     if (response.ok) {
       const result = await response.json();
-      successMessage.value = `models.com.stefvisser.springyield.Transaction completed successfully! Amount: €${transactionForm.value.transferAmount.toFixed(2)}`;
+      successMessage.value = `Transaction completed successfully! Amount: €${transactionForm.value.transferAmount.toFixed(2)}`;
       showSuccessAnimation.value = true;
 
       // Reset form
@@ -139,7 +139,7 @@ const handleTransactionSubmit = async () => {
       };
       selectedFromAccountBalance.value = null;
     } else {
-      const errorData = await response.json().catch(() => ({message: 'models.com.stefvisser.springyield.Transaction failed. Please try again.'}));
+      const errorData = await response.json().catch(() => ({message: 'Transaction failed. Please try again.'}));
       errorMessage.value = errorData.detail;
       showSuccessAnimation.value = false;
     }
@@ -162,11 +162,11 @@ const handleTransactionSubmit = async () => {
     <main class="flex-1 p-8 flex justify-center items-start overflow-y-auto">
       <div class="bg-white p-8 w-full h-full">
         <template v-if="!showSuccessAnimation">
-          <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">Make models.com.stefvisser.springyield.Transaction</h2>
+          <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">Make Transaction</h2>
           <form @submit.prevent="handleTransactionSubmit">
-            <!-- From models.com.stefvisser.springyield.Account Section -->
+            <!-- From Account Section -->
             <div class="mb-6">
-              <label for="fromAccount" class="block text-sm font-medium text-gray-700 mb-1">From models.com.stefvisser.springyield.Account (IBAN)</label>
+              <label for="fromAccount" class="block text-sm font-medium text-gray-700 mb-1">From Account (IBAN)</label>
               <div class="relative flex items-stretch gap-4">
                 <input
                     type="text"
@@ -179,7 +179,7 @@ const handleTransactionSubmit = async () => {
                 <button
                     type="button"
                     @click="toggleFromAddressBook"
-                    title="Search From models.com.stefvisser.springyield.Account"
+                    title="Search From Account"
                     class="bg-gray-200 hover:bg-gray-300 text-gray-700 ml-2 px-4 py-4 rounded-lg  border border-l-0 border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10 flex items-center"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -188,7 +188,7 @@ const handleTransactionSubmit = async () => {
                           d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/>
                   </svg>
                 </button>
-                <!-- From models.com.stefvisser.springyield.Account Search Popup -->
+                <!-- From Account Search Popup -->
                 <AddressBook
                     v-if="showFromAddressBook"
                     :userAccounts="[]"
@@ -204,9 +204,9 @@ const handleTransactionSubmit = async () => {
               </p>
             </div>
 
-            <!-- To models.com.stefvisser.springyield.Account Section -->
+            <!-- To Account Section -->
             <div class="mb-6">
-              <label for="toAccount" class="block text-sm font-medium text-gray-700 mb-1">To models.com.stefvisser.springyield.Account (IBAN)</label>
+              <label for="toAccount" class="block text-sm font-medium text-gray-700 mb-1">To Account (IBAN)</label>
               <div class="relative flex items-stretch gap-4">
                 <input
                     type="text"
@@ -219,7 +219,7 @@ const handleTransactionSubmit = async () => {
                 <button
                     type="button"
                     @click="toggleToAddressBook"
-                    title="Search To models.com.stefvisser.springyield.Account"
+                    title="Search To Account"
                     class="bg-gray-200 hover:bg-gray-300 text-gray-700 ml-2 px-4 py-4 rounded-lg  border border-l-0 border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10 flex items-center"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -228,7 +228,7 @@ const handleTransactionSubmit = async () => {
                           d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/>
                   </svg>
                 </button>
-                <!-- To models.com.stefvisser.springyield.Account Search Popup -->
+                <!-- To Account Search Popup -->
                 <AddressBook
                     v-if="showToAddressBook"
                     :userAccounts="[]"
@@ -281,7 +281,7 @@ const handleTransactionSubmit = async () => {
                   class="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition-colors duration-200"
               >
                 <span v-if="isSubmitting">Processing...</span>
-                <span v-else>Make models.com.stefvisser.springyield.Transaction</span>
+                <span v-else>Make Transaction</span>
               </button>
             </div>
           </form>
@@ -305,12 +305,12 @@ const handleTransactionSubmit = async () => {
             </div>
 
             <div class="flex gap-4">
-              <!-- New models.com.stefvisser.springyield.Transaction Button -->
+              <!-- New Transaction Button -->
               <button
                   @click="resetTransaction"
                   class="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-8 rounded-lg shadow-md transition-colors duration-200"
               >
-                Make New models.com.stefvisser.springyield.Transaction
+                Make New Transaction
               </button>
 
               <!-- Keep existing back to transactions button -->

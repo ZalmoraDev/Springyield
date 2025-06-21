@@ -53,7 +53,7 @@ const fetchTransactionDetails = async () => {
       if (err.response.status === 401) {
         error.value = 'Unauthorized: Your session may have expired. Please log in again.'
       } else if (err.response.status === 404) {
-        error.value = 'models.com.stefvisser.springyield.Transaction not found.'
+        error.value = 'Transaction not found.'
       }
     } else if (err.request) {
       error.value = 'Network error: Could not connect to the server.'
@@ -114,28 +114,28 @@ onMounted(() => {
       </div>
 
       <div v-if="error" class="mb-4 p-4 bg-red-100 text-red-700 border border-red-200 rounded-lg shadow">
-        <h3 class="font-bold text-lg mb-2">Error Fetching models.com.stefvisser.springyield.Transaction Details</h3>
+        <h3 class="font-bold text-lg mb-2">Error Fetching Transaction Details</h3>
         <p>{{ error }}</p>
       </div>
 
       <div v-if="loading" class="text-center py-10">
         <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
-        <p class="mt-4 text-gray-600 text-lg">Loading models.com.stefvisser.springyield.Transaction Details...</p>
+        <p class="mt-4 text-gray-600 text-lg">Loading Transaction Details...</p>
       </div>
 
       <div v-else-if="t" class="bg-white rounded-xl shadow-xl p-6 md:p-8">
         <div class="mb-8">
-          <h1 class="text-3xl font-bold text-gray-800">models.com.stefvisser.springyield.Transaction Details</h1>
-          <p class="text-lg text-gray-500 mt-1">models.com.stefvisser.springyield.Transaction ID: <span class="font-mono">{{ t.transactionId }}</span></p>
+          <h1 class="text-3xl font-bold text-gray-800">Transaction Details</h1>
+          <p class="text-lg text-gray-500 mt-1">Transaction ID: <span class="font-mono">{{ t.transactionId }}</span></p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 mb-8">
           <div class="bg-gray-50 p-4 rounded-lg ring-1 ring-gray-200">
-            <p class="text-sm text-gray-500">From models.com.stefvisser.springyield.Account</p>
+            <p class="text-sm text-gray-500">From Account</p>
             <p class="font-medium text-lg text-gray-700 truncate">{{ formatIban(t.fromAccount) }}</p>
           </div>
           <div class="bg-gray-50 p-4 rounded-lg ring-1 ring-gray-200">
-            <p class="text-sm text-gray-500">To models.com.stefvisser.springyield.Account</p>
+            <p class="text-sm text-gray-500">To Account</p>
             <p class="font-medium text-lg text-gray-700 truncate">{{ formatIban(t.toAccount) }}</p>
           </div>
           <div class="bg-gray-50 p-4 rounded-lg ring-1 ring-gray-200">
@@ -145,7 +145,7 @@ onMounted(() => {
             </p>
           </div>
           <div class="bg-gray-50 p-4 rounded-lg ring-1 ring-gray-200">
-            <p class="text-sm text-gray-500">models.com.stefvisser.springyield.Transaction Type</p>
+            <p class="text-sm text-gray-500">Transaction Type</p>
             <p class="font-medium text-lg">
               <span
                 :class="{

@@ -35,7 +35,7 @@ const deleteAccount = async () => {
 <template>
   <div v-if="show" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white rounded-lg p-6 w-full max-w-md">
-      <h2 class="text-xl font-bold mb-4">Delete models.com.stefvisser.springyield.Account</h2>
+      <h2 class="text-xl font-bold mb-4">Delete Account</h2>
 
       <p class="text-gray-600 mb-6">
         Are you sure you want to delete your account? This action cannot be undone.
@@ -55,7 +55,7 @@ const deleteAccount = async () => {
             :disabled="loading"
             class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50"
         >
-          {{ loading ? 'Deleting...' : 'Delete models.com.stefvisser.springyield.Account' }}
+          {{ loading ? 'Deleting...' : 'Delete Account' }}
         </button>
       </div>
     </div>

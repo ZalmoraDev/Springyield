@@ -66,7 +66,7 @@ const filterTransactions = computed(() => {
       }
     }
 
-    // models.com.stefvisser.springyield.Transaction type filter
+    // Transaction type filter
     if (transactionFilters.value.selectedTransactionType &&
         t.type !== transactionFilters.value.selectedTransactionType) {
       return false;
@@ -101,7 +101,7 @@ const navigateToProfile = () => {
 };
 
 const navigateToCreateTransaction = () => {
-  router.push({name: 'Create models.com.stefvisser.springyield.Transaction', query: {fromAccount: accountIban.value}});
+  router.push({name: 'Create Transaction', query: {fromAccount: accountIban.value}});
 };
 
 // Navigate to ATM page
@@ -222,19 +222,19 @@ onMounted(() => {
         </div>
       </div>
 
-      <!-- Right Column: models.com.stefvisser.springyield.Account Details and Transactions (Static Panel) -->
+      <!-- Right Column: Account Details and Transactions (Static Panel) -->
       <div class="flex flex-col w-3/4">
         <div
             class="bg-[#191B1D] text-neutral-300 p-6 md:p-8 rounded-[30px] shadow-2xl w-full max-w-full h-[calc(100vh-145px)] flex flex-col">
           <div class="flex flex-col justify-between items-start mb-6">
-            <h2 class="text-3xl font-bold text-blue-300 mb-2">models.com.stefvisser.springyield.Account: {{ accountIban || 'Loading...' }}</h2>
+            <h2 class="text-3xl font-bold text-blue-300 mb-2">Account: {{ accountIban || 'Loading...' }}</h2>
             <p :class="accountBalance < 0 ? 'text-red-400' : 'text-white'" class="text-xl font-semibold">Balance:
               {{ formatCurrencyNoPlus(parseFloat(accountBalance)) }}</p>
           </div>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <button @click="navigateToCreateTransaction"
                     class="bg-neutral-600 hover:bg-neutral-500 text-white font-semibold py-3 px-4 rounded-[10px] shadow-md transition-colors duration-200 cursor-pointer">
-              Create New models.com.stefvisser.springyield.Transaction
+              Create New Transaction
             </button>
             <button @click="navigateToATM"
                     class="bg-neutral-600 hover:bg-neutral-500 text-white font-semibold py-3 px-4 rounded-[10px] shadow-md transition-colors duration-200 cursor-pointer">

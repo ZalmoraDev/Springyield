@@ -51,7 +51,7 @@ const fetchAccountDetails = async () => {
         // Initialize editableAccount when account data is fetched
         editableAccount.value = JSON.parse(JSON.stringify(foundAccount))
       } else {
-        error.value = 'models.com.stefvisser.springyield.Account not found.'
+        error.value = 'Account not found.'
       }
     } else {
       error.value = 'Failed to fetch account details or no data returned.'
@@ -118,7 +118,7 @@ const saveChanges = async () => {
     a.value.dailyLimit = response.data.dailyLimit
     a.value.absoluteLimit = response.data.absoluteLimit
     isEditing.value = false
-    toastMessage.value = 'models.com.stefvisser.springyield.Account limits updated successfully'
+    toastMessage.value = 'Account limits updated successfully'
     showToast.value = true
     setTimeout(() => showToast.value = false, 3000)
 
@@ -163,16 +163,16 @@ onMounted(() => {
             Back to Accounts
           </button>
           <div class="flex gap-2">
-            <!-- Edit models.com.stefvisser.springyield.Account button - visible when not in edit mode -->
+            <!-- Edit Account button - visible when not in edit mode -->
             <button v-if="!isEditing && a"
                     @click="toggleEditMode"
                     class="flex gap-2 items-center px-4 py-2 rounded-2xl text-white bg-blue-500 hover:bg-blue-600 font-bold border-gray-300 border cursor-pointer"
             >
               <img
                   src="/edit_24dp_FFF.svg"
-                  alt="Edit models.com.stefvisser.springyield.Account Icon"
+                  alt="Edit Account Icon"
                   class="w-5 h-5 flex-shrink-0">
-              Edit models.com.stefvisser.springyield.Account
+              Edit Account
             </button>
 
             <!-- Save button - visible when in edit mode -->
@@ -209,18 +209,18 @@ onMounted(() => {
 
       <div v-if="loading && !isEditing" class="text-center py-10">
         <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
-        <p class="mt-4 text-gray-600 text-lg">Loading models.com.stefvisser.springyield.Account Details...</p>
+        <p class="mt-4 text-gray-600 text-lg">Loading Account Details...</p>
       </div>
 
       <div v-else-if="a && editableAccount" class="bg-white rounded-xl shadow-xl p-6 md:p-8">
         <div class="mb-8">
-          <h1 class="text-3xl font-bold text-gray-800">models.com.stefvisser.springyield.Account Details</h1>
+          <h1 class="text-3xl font-bold text-gray-800">Account Details</h1>
           <p class="text-lg text-gray-500 mt-1">IBAN: <span class="font-mono">{{ formatIban(a.iban) }}</span></p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 mb-8">
           <div class="bg-gray-50 p-4 rounded-lg ring-1 ring-gray-200">
-            <p class="text-sm text-gray-500">models.com.stefvisser.springyield.Account ID</p>
+            <p class="text-sm text-gray-500">Account ID</p>
             <p class="font-medium text-lg text-gray-700 truncate">{{ a.accountId }}</p>
           </div>
           <div class="bg-gray-50 p-4 rounded-lg ring-1 ring-gray-200">
@@ -230,7 +230,7 @@ onMounted(() => {
             </p>
           </div>
           <div class="bg-gray-50 p-4 rounded-lg ring-1 ring-gray-200">
-            <p class="text-sm text-gray-500">models.com.stefvisser.springyield.Account Type</p>
+            <p class="text-sm text-gray-500">Account Type</p>
             <span
                 :class="{
                   'bg-sy-300 text-sy-800': a.accountType === 'PAYMENT',
@@ -258,7 +258,7 @@ onMounted(() => {
 
         <!-- Section for account limits -->
         <div class="mb-8 pt-8 border-t border-gray-200">
-          <h3 class="text-xl font-semibold text-gray-700 mb-4">models.com.stefvisser.springyield.Account Limits</h3>
+          <h3 class="text-xl font-semibold text-gray-700 mb-4">Account Limits</h3>
 
           <div v-if="!isEditing" class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="bg-gray-50 p-4 rounded-lg ring-1 ring-gray-200">

@@ -45,14 +45,14 @@ const logout = () => {
     </div>
 
     <div class="flex items-center">
-      <span class="text-neutral-400 mr-4 text-lg">Welcome, {{ user ? user.firstName : 'models.com.stefvisser.springyield.User' }}!</span>
+      <span class="text-neutral-400 mr-4 text-lg">Welcome, {{ user ? user.firstName : 'User' }}!</span>
 
       <button
           type="button"
           @click.stop="navigateToProfile"
           class="mr-4 bg-neutral-800 hover:bg-neutral-700 text-white font-semibold py-2 px-5 rounded-lg shadow-md transition-colors duration-200 cursor-pointer"
       >
-        models.com.stefvisser.springyield.User Profile
+        User Profile
       </button>
 
       <button

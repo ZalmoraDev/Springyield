@@ -63,7 +63,7 @@ onMounted(() => {
       <!-- Search and Filter Section -->
       <PageSection title="Search Accounts">
         <template #header-extra>
-          <!-- models.com.stefvisser.springyield.Account Type Filter Dropdown -->
+          <!-- Account Type Filter Dropdown -->
           <div class="flex items-center space-x-4">
             <div class="relative">
               <select
@@ -105,7 +105,7 @@ onMounted(() => {
             <thead class="bg-gray-50 sticky top-0 z-10">
             <tr>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                models.com.stefvisser.springyield.Account ID
+                Account ID
               </th>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Owner
@@ -117,7 +117,7 @@ onMounted(() => {
                 Balance
               </th>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Type models.com.stefvisser.springyield.Account
+                Type Account
               </th>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Status
@@ -183,7 +183,7 @@ onMounted(() => {
                       class="p-3 w-11 rounded-2xl bg-blue-500 hover:bg-blue-600 cursor-pointer flex-shrink-0">
                     <img
                         src="/info_24dp_FFF.svg"
-                        alt="models.com.stefvisser.springyield.Account Info Icon"
+                        alt="Account Info Icon"
                         class="w-5 h-5 flex-shrink-0">
                   </router-link>
                 </div>

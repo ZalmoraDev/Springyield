@@ -21,11 +21,11 @@
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
         <div class="bg-sy-800 p-6 rounded-xl shadow-lg min-h-[300px] lg:min-h-[400px] flex flex-col justify-center">
           <Bar v-if="transactionTypeData.labels.length" :data="transactionTypeData" :options="transactionChartOptions" />
-          <p v-else class="text-sy-400 text-xl flex items-center justify-center h-full">Loading models.com.stefvisser.springyield.Transaction Data...</p>
+          <p v-else class="text-sy-400 text-xl flex items-center justify-center h-full">Loading Transaction Data...</p>
         </div>
         <div class="bg-sy-800 p-6 rounded-xl shadow-lg min-h-[300px] lg:min-h-[400px] flex flex-col justify-center">
           <Doughnut v-if="accountTypeData.labels.length" :data="accountTypeData" :options="accountChartOptions" />
-          <p v-else class="text-sy-400 text-xl flex items-center justify-center h-full">Loading models.com.stefvisser.springyield.Account Data...</p>
+          <p v-else class="text-sy-400 text-xl flex items-center justify-center h-full">Loading Account Data...</p>
         </div>
       </div>
 
@@ -82,7 +82,7 @@ const totalAccounts = ref('0');
 const totalTransactions = ref('0');
 const pendingApprovals = ref('0');
 const transactionTypeData = ref({ labels: [], datasets: [{ data: [], backgroundColor: [], label: 'Transactions by Type' }] });
-const accountTypeData = ref({ labels: [], datasets: [{ data: [], backgroundColor: [], label: 'User models.com.stefvisser.springyield.Account Types' }] });
+const accountTypeData = ref({ labels: [], datasets: [{ data: [], backgroundColor: [], label: 'User Account Types' }] });
 const latestAccountCreationMessage = ref('');
 const latestTransactionMessage = ref('');
 const latestUnapprovedUserMessage = ref('');
@@ -107,7 +107,7 @@ const transactionChartOptions = computed(() => ({
 
 const accountChartOptions = computed(() => ({
   ...chartOptions.value,
-  plugins: { ...chartOptions.value.plugins, title: { ...chartOptions.value.plugins.title, text: 'User models.com.stefvisser.springyield.Account Types Distribution' } },
+  plugins: { ...chartOptions.value.plugins, title: { ...chartOptions.value.plugins.title, text: 'User Account Types Distribution' } },
   scales: {}
 }));
 
@@ -163,7 +163,7 @@ onMounted(async () => {
         }, {});
         accountTypeData.value = {
           labels: Object.keys(roleCounts),
-          datasets: [{ data: Object.values(roleCounts), backgroundColor: ['#4BC0C0', '#FFCE56', '#FF6384', '#36A2EB', '#9966FF', '#FDB45C', '#949FB1'], label: 'User models.com.stefvisser.springyield.Account Types' }]
+          datasets: [{ data: Object.values(roleCounts), backgroundColor: ['#4BC0C0', '#FFCE56', '#FF6384', '#36A2EB', '#9966FF', '#FDB45C', '#949FB1'], label: 'User Account Types' }]
         };
       }
     }
@@ -173,7 +173,7 @@ onMounted(async () => {
       const d = await latestAccountResponse.json();
       if (d.data && d.data.length > 0) {
         const a = d.data[0];
-        latestAccountCreationMessage.value = `models.com.stefvisser.springyield.Account ${a.iban} for ${a.user?.firstName || 'N/A'} ${a.user?.lastName || ''} created.`;
+        latestAccountCreationMessage.value = `Account ${a.iban} for ${a.user?.firstName || 'N/A'} ${a.user?.lastName || ''} created.`;
       }
     }
 

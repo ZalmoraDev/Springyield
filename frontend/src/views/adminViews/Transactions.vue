@@ -161,7 +161,7 @@ onMounted(() => fetchTransactions())
           @click="makeTransaction"
           class="px-5 py-3 text-white bg-blue-600 hover:bg-blue-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
       >
-        Make models.com.stefvisser.springyield.Transaction
+        Make Transaction
       </button>
       </div>
 
@@ -244,10 +244,10 @@ onMounted(() => fetchTransactions())
                 ID
               </th>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                From models.com.stefvisser.springyield.Account
+                From Account
               </th>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                To models.com.stefvisser.springyield.Account
+                To Account
               </th>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Amount
@@ -306,7 +306,7 @@ onMounted(() => fetchTransactions())
                   >
                     <img
                         src="/info_24dp_FFF.svg"
-                        alt="models.com.stefvisser.springyield.Transaction Info Icon"
+                        alt="Transaction Info Icon"
                         class="w-5 h-5 flex-shrink-0"
                     />
                   </router-link>

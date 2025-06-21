@@ -87,7 +87,7 @@ class UserServiceImpl implements UserService {
         normalAccount.setBalance(initialBalance);
         normalAccount.setStatus(AccountStatus.ACTIVE);
         normalAccount.setIban(new Iban.Builder()
-                .countryCode(CountryCode.NL)
+                .countryCode(CountryCode.NL).bankCode("SPYD")
                 .buildRandom().toFormattedString()
         );
         Account savedNormalAccount = accountService.createAccount(normalAccount);
@@ -102,7 +102,7 @@ class UserServiceImpl implements UserService {
         savingsAccount.setBalance(initialBalance);
         savingsAccount.setStatus(AccountStatus.ACTIVE);
         savingsAccount.setIban(new Iban.Builder()
-                .countryCode(CountryCode.NL)
+                .countryCode(CountryCode.NL).bankCode("SPYD")
                 .buildRandom().toFormattedString()
         );
         Account savedSavingsAccount = accountService.createAccount(savingsAccount);
@@ -183,7 +183,7 @@ class UserServiceImpl implements UserService {
                     role.name().toLowerCase(),
                     role.name().toLowerCase(),
                     passwordEncoder.encode("pass"),
-                    role.name().toLowerCase() + "@springyield.nl",
+                    role.name().toLowerCase() + "@springyield.com",
                     123456789,
                     "0612345678",
                     role,
@@ -208,7 +208,7 @@ class UserServiceImpl implements UserService {
                 "Daan",
                 "Koster",
                 passwordEncoder.encode("pass"),
-                "daankoster@springyield.nl",
+                "daankoster@springyield.com",
                 123456789,
                 "0612345678",
                 UserRole.APPROVED,
@@ -229,7 +229,7 @@ class UserServiceImpl implements UserService {
                 "ATMS", // First name
                 "System",   // Last name
                 passwordEncoder.encode("atmspass"), // Password
-                "atms@springyield.nl", // Email
+                "atms@springyield.com", // Email
                 987654321, // BSN
                 "0687654321", // Phone number
                 UserRole.ADMIN, // Role - Assuming you might have or want a SYSTEM role

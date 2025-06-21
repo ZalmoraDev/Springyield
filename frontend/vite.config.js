@@ -1,4 +1,5 @@
 import { fileURLToPath, URL } from 'node:url'
+import tailwindcss from '@tailwindcss/vite'
 
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
@@ -9,6 +10,7 @@ export default defineConfig({
   plugins: [
     vue(),
     vueDevTools(),
+    tailwindcss()
   ],
   resolve: {
     alias: {
@@ -16,13 +18,14 @@ export default defineConfig({
     },
   },
   server: {
-    allowedHosts: ['springyield.stefvisser.com', 'localhost', 'springyield.local'],
+    allowedHosts: ['springyield.stefvisser.com', 'localhost'],
     host: '0.0.0.0',        // Listen on all network interfaces
-    strictPort: false,      // Allow fallback to another port if needed
+    port: 20300,            // Specify the port for the dev server
+    strictPort: true,       // Do not fall back to another port if 20300 is in use
     cors: true,             // Enable CORS for all origins
-    hmr: {
-      clientPort: 443,      // Connect to WebSocket through HTTPS port if using reverse proxy
-      host: 'springyield.stefvisser.com'  // Specify your domain for HMR connections
+    // HMR settings removed for local development, Vite will handle it.
+    watch: {
+      usePolling: true
     }
   }
 })

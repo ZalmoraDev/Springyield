@@ -122,7 +122,7 @@ const handleUserApprovalError = (errorMessage) => {
 
     <!-- Main Content -->
     <main class="flex-1 p-8 flex flex-col h-dvh overflow-hidden">
-      <h1 class="text-2xl font-bold text-gray-800 mb-6">models.com.stefvisser.springyield.User Overview</h1>
+      <h1 class="text-2xl font-bold text-gray-800 mb-6">User Overview</h1>
 
       <!-- Error State -->
       <ErrorDisplay :error="error"/>
@@ -216,14 +216,14 @@ const handleUserApprovalError = (errorMessage) => {
                         class="p-3 w-11 rounded-l-2xl bg-blue-500 hover:bg-blue-600 cursor-pointer flex-shrink-0">
                       <img
                           src="/info_24dp_FFF.svg"
-                          alt="models.com.stefvisser.springyield.User Info Icon"
+                          alt="User Info Icon"
                           class="w-5 h-5 flex-shrink-0">
                     </router-link>
                     <button @click="openDeleteModal(u)"
                             class="p-3 w-11 rounded-r-2xl bg-red-500 hover:bg-red-600 cursor-pointer flex-shrink-0">
                       <img
                           src="/delete_24dp_FFF.svg"
-                          alt="models.com.stefvisser.springyield.User Deletion Icon"
+                          alt="User Deletion Icon"
                           class="w-5 h-5 flex-shrink-0">
                     </button>
                   </div>
@@ -232,7 +232,7 @@ const handleUserApprovalError = (errorMessage) => {
                           class="p-3 w-11 rounded-2xl bg-green-500 hover:bg-green-600 cursor-pointer flex-shrink-0">
                     <img
                         src="/check_24dp_FFF.svg"
-                        alt="models.com.stefvisser.springyield.User Info Icon"
+                        alt="User Info Icon"
                         class="w-5 h-5 flex-shrink-0">
                   </button>
                 </div>

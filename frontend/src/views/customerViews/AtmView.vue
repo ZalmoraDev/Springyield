@@ -20,9 +20,9 @@
           </button>
         </div>
 
-        <!-- models.com.stefvisser.springyield.Account Selection -->
+        <!-- Account Selection -->
         <div class="mb-8">
-          <label for="selectedAccount" class="block text-base font-medium text-neutral-300 mb-2">Select models.com.stefvisser.springyield.Account
+          <label for="selectedAccount" class="block text-base font-medium text-neutral-300 mb-2">Select Account
             (IBAN)</label>
           <select id="selectedAccount" v-model="selectedAccountIban" @change="handleAccountChange"
                   class="bg-neutral-700 border border-neutral-600 text-neutral-200 text-lg rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-full p-3 placeholder-neutral-400">
@@ -33,7 +33,7 @@
           </select>
         </div>
 
-        <!-- models.com.stefvisser.springyield.Account Balance -->
+        <!-- Account Balance -->
         <div v-if="selectedAccountIban && !isLoadingBalance" class="mb-10 p-6 bg-neutral-800 rounded-lg text-center">
           <p class="text-lg text-neutral-400">Current Balance</p>
           <p class="text-4xl md:text-5xl font-bold text-neutral-100 mt-1">&euro;{{

@@ -77,14 +77,14 @@ class AuthControllerTest {
     @BeforeEach
     void setUp() {
         // Initialize a valid login DTO with test credentials
-        validLoginDto = new UserLoginDto("test@springyield.nl", "pass");
+        validLoginDto = new UserLoginDto("test@springyield.com", "pass");
 
         // Initialize a valid signup DTO with complete user data
         validSignupDto = new UserSignupDto(
                 "Peter",
                 "Lusse",
                 "pass",
-                "p.lusse@springyield.nl",
+                "p.lusse@springyield.com",
                 "+31612345678",
                 123456782
         );
@@ -94,7 +94,7 @@ class AuthControllerTest {
                 "Peter",
                 "Lusse",
                 new BCryptPasswordEncoder().encode("pass"), // Simulate password hashing
-                "p.lusse@springyield.nl",
+                "p.lusse@springyield.com",
                 123456782,
                 "+31612345678",
                 UserRole.APPROVED,
@@ -208,7 +208,7 @@ class AuthControllerTest {
         assertEquals(testToken, response.getBody().getToken(),
                 "Returned token should match the mock token");
 
-        assertEquals("p.lusse@springyield.nl", response.getBody().getUser().getEmail(),
+        assertEquals("p.lusse@springyield.com", response.getBody().getUser().getEmail(),
                 "Returned user email should match the registered email");
 
         // Verify mock interactions

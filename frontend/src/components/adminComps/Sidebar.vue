@@ -84,7 +84,7 @@ const isUserProfileActive = () => {
         <li>
           <router-link to="/admin/transactions"
                        :class="['flex items-center gap-3 p-3 rounded-lg transition-all', isActive('/admin/transactions') ? 'bg-sy-800' : 'hover:bg-sy-700']">
-            <img src="/currency_exchange_24dp_FFF.svg" alt="models.com.stefvisser.springyield.Transaction Icon" class="w-5 h-5"/>
+            <img src="/currency_exchange_24dp_FFF.svg" alt="Transaction Icon" class="w-5 h-5"/>
             <span
                 :class="['whitespace-nowrap transition-opacity', isSidebarManuallyOpened ? 'opacity-100' : 'opacity-0 group-hover:opacity-100']">Transactions</span>
           </router-link>

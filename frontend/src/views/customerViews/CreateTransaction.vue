@@ -5,10 +5,10 @@
     <main class="flex-1 p-8 flex justify-center items-start overflow-y-auto">
       <div class="bg-[#191B1D] p-8 rounded-[30px] shadow-xl w-full max-w-2xl min-h-[500px]">
         <template v-if="!showSuccessAnimation">
-          <h2 class="text-3xl font-bold text-neutral-100 mb-8 text-center">Create New models.com.stefvisser.springyield.Transaction</h2>
+          <h2 class="text-3xl font-bold text-neutral-100 mb-8 text-center">Create New Transaction</h2>
           <form @submit.prevent="handleTransactionSubmit">
             <div class="mb-6">
-              <label for="fromAccount" class="block text-sm font-medium text-neutral-300 mb-1">From models.com.stefvisser.springyield.Account (IBAN)</label>
+              <label for="fromAccount" class="block text-sm font-medium text-neutral-300 mb-1">From Account (IBAN)</label>
               <select id="fromAccount" v-model="transactionForm.fromAccount" class="bg-neutral-700 border border-neutral-600 text-neutral-200 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-full p-2.5 placeholder-neutral-400">
                 <option disabled value="">Please select an account</option>
                 <option v-for="account in userAccounts" :key="account.iban" :value="account.iban">
@@ -21,7 +21,7 @@
             </div>
 
             <div class="mb-6">
-              <label for="toAccount" class="block text-sm font-medium text-neutral-300 mb-1">To models.com.stefvisser.springyield.Account (IBAN)</label>
+              <label for="toAccount" class="block text-sm font-medium text-neutral-300 mb-1">To Account (IBAN)</label>
               <div class="relative flex items-stretch">
                 <input
                     type="text"
@@ -71,7 +71,7 @@
             <div class="flex justify-center">
               <button type="submit" :disabled="isSubmitting" class="bg-sky-600 hover:bg-sky-700 disabled:bg-sky-800 text-white font-semibold py-3 px-8 rounded-lg shadow-md transition-colors duration-200">
                 <span v-if="isSubmitting">Processing...</span>
-                <span v-else>Send models.com.stefvisser.springyield.Transaction</span>
+                <span v-else>Send Transaction</span>
               </button>
             </div>
           </form>
@@ -182,7 +182,7 @@ const handleTransactionSubmit = async () => {
   errorMessage.value = '';
 
   if (!transactionForm.value.fromAccount || !transactionForm.value.toAccount || !transactionForm.value.transferAmount) {
-    errorMessage.value = 'Please fill in all required fields: From models.com.stefvisser.springyield.Account, To models.com.stefvisser.springyield.Account, and Amount.';
+    errorMessage.value = 'Please fill in all required fields: From Account, To Account, and Amount.';
     isSubmitting.value = false;
     return;
   }
@@ -226,7 +226,7 @@ const handleTransactionSubmit = async () => {
       showSuccessAnimation.value = true;
       fetchUserAndAccounts();
     } else {
-      const errorData = await response.json().catch(() => ({ message: 'models.com.stefvisser.springyield.Transaction failed. Please try again.' }));
+      const errorData = await response.json().catch(() => ({ message: 'Transaction failed. Please try again.' }));
       errorMessage.value = errorData.message;
       showSuccessAnimation.value = false;
     }
