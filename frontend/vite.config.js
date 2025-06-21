@@ -18,7 +18,7 @@ export default defineConfig({
     },
   },
   server: {
-    allowedHosts: ['localhost'],
+    allowedHosts: ['localhost', 'stefvisser.com', 'springyield.stefvisser.com'], // Allow these hosts
     host: '0.0.0.0',        // Listen on all network interfaces
     port: 5173,            // Specify the port for the dev server
     strictPort: true,      // Do not fall back to another port if 20300 is in use
