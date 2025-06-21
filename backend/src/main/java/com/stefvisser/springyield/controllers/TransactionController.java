@@ -29,8 +29,6 @@ import java.util.Map;
  * It handles HTTP requests related to transaction operations and delegates the business logic
  * to the appropriate service classes. All endpoints are mapped to the "/api/transactions" base path.
  * </p>
- *
- * @since 1.0
  */
 @RestController
 @RequestMapping("/api/transactions")

@@ -20,8 +20,6 @@ import java.util.Objects;
  * It handles HTTP requests related to account operations and delegates the business logic
  * to the appropriate service classes. All endpoints are mapped to the "/api/account" base path.
  * </p>
- *
- * @since 1.0
  */
 @RestController
 @RequestMapping("/api/account")

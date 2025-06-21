@@ -12,8 +12,6 @@ import lombok.NoArgsConstructor;
  * authentication service, containing only the essential information needed
  * for user authentication.
  * </p>
- *
- * @since 1.0
  */
 @Data
 @AllArgsConstructor

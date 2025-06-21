@@ -8,9 +8,6 @@ import lombok.*;
  * This class encapsulates the information for an address book entry,
  * including the first name, last name, and IBAN of a contact.
  * </p>
- *
- * @author Daan Koster
- * @since 1.0
  */
 @Data
 @NoArgsConstructor

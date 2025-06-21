@@ -107,7 +107,7 @@ const isUserProfileActive = () => {
               class="w-full flex items-center gap-3 p-3 rounded-lg bg-red-600 hover:bg-red-700 transition-all cursor-pointer">
         <img src="/logout_24dp_FFF.svg" alt="Logout Icon" class="w-5 h-5 flex-shrink-0"/>
         <span
-            :class="['whitespace-nowrap transition-opacity duration-300', isSidebarManuallyOpened ? 'opacity-100' : 'opacity-0 group-hover:opacity-100']">Uitloggen</span>
+            :class="['whitespace-nowrap transition-opacity duration-300', isSidebarManuallyOpened ? 'opacity-100' : 'opacity-0 group-hover:opacity-100']">Logout</span>
       </button>
     </div>
   </aside>

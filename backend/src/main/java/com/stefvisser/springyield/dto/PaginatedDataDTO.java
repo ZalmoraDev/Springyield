@@ -14,8 +14,6 @@ import java.util.List;
  * </p>
  *
  * @param <T> The type of data being paginated
- * @since 1.0
- * @author Daan Koster
  */
 @Data
 @AllArgsConstructor

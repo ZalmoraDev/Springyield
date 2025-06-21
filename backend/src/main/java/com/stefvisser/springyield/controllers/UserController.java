@@ -19,8 +19,6 @@ import org.springframework.web.server.ResponseStatusException;
  * related to user operations and delegates the business logic to the appropriate
  * service classes. All endpoints are mapped to the "/api/user" base path.
  * </p>
- *
- * @since 1.0
  */
 @RestController
 @RequestMapping("/api/user")

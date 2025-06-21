@@ -21,8 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
  * It provides endpoints for validating user credentials and generating
  * authentication tokens. All endpoints are mapped to the "/api/auth" base path.
  * </p>
- *
- * @since 1.0
  */
 @RestController
 @RequestMapping("/api/auth")

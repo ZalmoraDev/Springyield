@@ -17,8 +17,6 @@ import java.math.BigDecimal;
  * unnecessary details. This lightweight representation is suitable for lists of
  * accounts in user profiles and summary displays.
  * </p>
- *
- * @since 1.0
  */
 @Data
 public class AccountProfileDto {

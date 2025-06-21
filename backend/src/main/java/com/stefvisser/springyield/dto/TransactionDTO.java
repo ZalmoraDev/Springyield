@@ -15,8 +15,6 @@ import java.time.LocalDateTime;
  * It contains all the essential information about a transaction in the banking system,
  * such as the source and destination accounts, transfer amount, and transaction metadata.
  * </p>
- *
- * @since 1.0
  */
 @Data
 @AllArgsConstructor

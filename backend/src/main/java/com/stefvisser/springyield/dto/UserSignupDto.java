@@ -15,8 +15,6 @@ import java.util.List;
  * profiles. This DTO serves as the contract between client applications and the backend
  * for new user registration.
  * </p>
- *
- * @since 1.0
  */
 @Data
 @AllArgsConstructor

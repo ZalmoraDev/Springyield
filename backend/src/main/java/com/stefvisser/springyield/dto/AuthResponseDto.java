@@ -10,8 +10,6 @@ import lombok.Getter;
  * subsequent authorized requests, as well as the authenticated user's profile
  * information for immediate use in the client application.
  * </p>
- *
- * @since 1.0
  */
 @Getter
 public class AuthResponseDto {

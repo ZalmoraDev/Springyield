@@ -50,16 +50,20 @@ const handleSignup = async () => {
           class="inline-flex items-center text-gray-700 p-1 rounded-xl mb-2 hover:bg-gray-200 transition cursor-pointer"
       >
         <img src="/arrow_back_24dp_000.svg" alt="Arrow left" class="w-6 h-6 mr-2">
-        <span>Terug naar inloggen</span>
+        <span>Back to login</span>
       </router-link>
       <img src="/logo/logo-bt.svg" alt="Logo" class="w-24 h-24 mx-auto mb-2">
-      <h1 class="text-2xl font-bold text-center mb-6">Registreren</h1>
+      <h1 class="text-2xl font-bold text-center mb-6">Sign-up</h1>
+      <p class="font-bold text-red-500 mb-4 text-center bg-red-100 p-2 rounded-xl">
+        ⛔ Warning: This is a demonstration banking app! Do <span class="font-underline">NOT</span> use real credentials, emails, or personal information!
+      </p>
+
       <form class="flex flex-col gap-4" @submit.prevent="handleSignup">
 
         <div class="flex flex-col gap-2">
           <div class="flex flex-row gap-2">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Voornaam *</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Firstname *</label>
               <input
                   v-model="firstName"
                   type="text"
@@ -68,7 +72,7 @@ const handleSignup = async () => {
               />
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Achternaam *</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Lastname *</label>
               <input
                   v-model="lastName"
                   type="text"
@@ -78,7 +82,7 @@ const handleSignup = async () => {
             </div>
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">BSN / Persoonsnummer *</label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">BSN / Citizen Service Number *</label>
             <input
                 v-model="bsnNumber"
                 type="number"
@@ -99,7 +103,7 @@ const handleSignup = async () => {
             />
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Telefoonnummer *</label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">PhoneNumber *</label>
             <input
                 v-model="phoneNumber"
                 type="tel"
@@ -111,7 +115,7 @@ const handleSignup = async () => {
 
         <div class="gap-2 flex flex-col">
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Wachtwoord *</label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Password *</label>
             <input
                 v-model="password"
                 type="password"
@@ -120,7 +124,7 @@ const handleSignup = async () => {
             />
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Herhaal Wachtwoord *</label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Confirm Password *</label>
             <input
                 v-model="confirmPassword"
                 type="password"
@@ -134,9 +138,9 @@ const handleSignup = async () => {
             type="submit"
             class="w-full bg-sy-600 text-white mb-2 py-2 rounded-xl hover:bg-sy-700 transition cursor-pointer"
         >
-          Gebruiker Aanmaken
+          Create User
         </button>
-        <span class="text-gray-500">* vereiste velden</span>
+        <span class="text-gray-500">* required fields</span>
       </form>
     </div>
   </div>

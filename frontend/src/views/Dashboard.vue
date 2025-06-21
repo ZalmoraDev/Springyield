@@ -109,6 +109,10 @@ const approveMyselfDemo = async () => {
               class="mt-8 bg-white hover:bg-gray-200 text-sy-700 font-bold py-2 px-6 rounded-lg shadow-md cursor-pointer">
         Logout
       </button>
+<!--      <button @click="approveMyselfDemo"-->
+<!--              class="mt-8 bg-white hover:bg-gray-200 text-sy-700 font-bold py-2 px-6 rounded-lg shadow-md cursor-pointer">-->
+<!--        Approve Myself-->
+<!--      </button>-->
     </div>
 
 

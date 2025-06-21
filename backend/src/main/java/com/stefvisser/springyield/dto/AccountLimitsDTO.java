@@ -11,8 +11,6 @@ import java.math.BigDecimal;
  * providing a structured way to transfer limit data between service layers
  * and client applications.
  * </p>
- *
- * @since 1.0
  */
 @Data
 @NoArgsConstructor

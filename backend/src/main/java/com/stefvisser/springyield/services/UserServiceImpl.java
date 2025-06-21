@@ -45,7 +45,7 @@ class UserServiceImpl implements UserService {
     @PostConstruct
     @Transactional // Add @Transactional here
     public void initializeDefaultUsers() {
-        addDefaultUsers(); // This calls createDaan()
+        addDefaultUsers();
         addRandomUsers(250);
     }
 
@@ -196,32 +196,8 @@ class UserServiceImpl implements UserService {
             }
             users.add(user);
         }
-        createDaan();
         createAtmsUser(); // Create a user for ATMS system
         userRepository.saveAll(users); // Save default role users first
-        // Create Daan user (and his accounts)
-    }
-
-    // @Transactional // This is now covered by initializeDefaultUsers
-    private void createDaan() {
-        User daan = new User(
-                "Daan",
-                "Koster",
-                passwordEncoder.encode("pass"),
-                "daankoster@springyield.com",
-                123456789,
-                "0612345678",
-                UserRole.APPROVED,
-                new ArrayList<>()
-        );
-        for (int i = 0; i < 3; i++) {
-            Account account = fakeUserLoader.createAccount(fakeUserLoader.getRandomIban());
-            account.setUser(daan);
-            daan.getAccounts().add(account);
-        }
-        userRepository.save(daan); // This saves Daan and cascades to save his accounts
-
-        createTransactionsForDaan(daan, 100); // Create 100 transactions for Daan after saving him
     }
 
     private void createAtmsUser() {
@@ -251,68 +227,6 @@ class UserServiceImpl implements UserService {
 
         atmsUser.getAccounts().add(atmsAccount);
         userRepository.save(atmsUser); // Save user, which cascades to account
-    }
-
-
-    /**
-     * Creates a specified number of transactions for the user "Daan Koster".
-     * Transactions are created between Daan's first two accounts.
-     * This method assumes it's called within an active transaction if Daan's accounts are lazy-loaded.
-     *
-     * @param numberOfTransactions The number of transactions to create.
-     */
-    // @Transactional // This is now covered by initializeDefaultUsers
-    public void createTransactionsForDaan(User daan, int numberOfTransactions) {
-
-        List<Account> daanAccounts = daan.getAccounts();
-        if (daanAccounts == null || daanAccounts.size() < 2) {
-            System.err.println("Daan Koster does not have at least two accounts. Needs " +
-                    (daanAccounts == null || daanAccounts.isEmpty() ? "2, found 0" : "2, found " + daanAccounts.size()) +
-                    ". Cannot create transactions between his accounts.");
-            return;
-        }
-
-        Account account1 = daanAccounts.get(0);
-        Account account2 = daanAccounts.get(1);
-
-        List<Transaction> newTransactions = new ArrayList<>();
-
-        Faker faker = new Faker(new Locale("nl", "NL"));
-
-        for (int i = 0; i < numberOfTransactions; i++) {
-            Transaction transaction = new Transaction();
-            // Generate a random amount between 1.00 and 1000.99
-            BigDecimal amount = BigDecimal.valueOf(faker.number().randomDouble(2,1, 20)).setScale(2, RoundingMode.HALF_UP);
-            transaction.setTransferAmount(amount);
-
-            String description = faker.rickAndMorty().character() + " at " + faker.rickAndMorty().location();
-
-            transaction.setDescription(description);
-            // Generate a random timestamp within the last 30 days
-            transaction.setTimestamp(LocalDateTime.now()
-                    .minusDays(faker.number().numberBetween(0, 5))
-                    .minusHours(faker.number().numberBetween(0, 23))
-                    .minusMinutes(faker.number().numberBetween(0, 59))
-            );
-
-            // Assuming TransactionType.TRANSFER exists in your TransactionType enum
-            // If not, replace with an appropriate type.
-            transaction.setTransactionType(Transaction.TransactionType.TRANSFER);
-
-            // Alternate sender and receiver between Daan's first two accounts
-            if (i % 2 == 0) {
-                transaction.setFromAccount(account1.getIban());
-                transaction.setToAccount(account2.getIban());
-            } else {
-                transaction.setFromAccount(account2.getIban());
-                transaction.setToAccount(account1.getIban());
-            }
-            newTransactions.add(transaction);
-        }
-
-        if (!newTransactions.isEmpty()) {
-            transactionRepository.saveAll(newTransactions);
-        }
     }
 
     @Override

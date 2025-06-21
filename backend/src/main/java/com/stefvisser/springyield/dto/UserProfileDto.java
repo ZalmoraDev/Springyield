@@ -18,8 +18,6 @@ import java.util.List;
  * It excludes sensitive data like passwords and includes only the data needed for
  * profile display and management.
  * </p>
- *
- * @since 1.0
  */
 @Data
 @NoArgsConstructor
