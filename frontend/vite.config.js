@@ -18,14 +18,14 @@ export default defineConfig({
     },
   },
   server: {
-    allowedHosts: ['localhost', 'springyield.stefvisser.com'],
+    allowedHosts: ['localhost'],
     host: '0.0.0.0',        // Listen on all network interfaces
     port: 5173,            // Specify the port for the dev server
-    strictPort: true,      // Do not fall back to another port if 5173 is in use
+    strictPort: true,      // Do not fall back to another port if 20300 is in use
     cors: true,             // Enable CORS for all origins
+    // HMR settings removed for local development, Vite will handle it.
     hmr: {
-      clientPort: 20300,
-      host: 'auto'
+      clientPort: 20300
     },
     watch: {
       usePolling: true
