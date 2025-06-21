@@ -1,0 +1,32 @@
+name: Springyield
+
+services:
+  nginx:
+    container_name: springyield-nginx
+    image: nginx:1.26
+    restart: always
+    ports:
+      - "20300:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - vite-vue
+      - springboot
+
+  vite-vue:
+    container_name: springyield-vite-vue
+    build:
+      context: .
+      dockerfile: vite-vue.dockerfile
+    restart: always
+    expose:
+      - "5173"  # internal only, not published to host
+
+  springboot:
+    container_name: springyield-springboot
+    build:
+      context: .
+      dockerfile: springboot.dockerfile
+    restart: always
+    volumes:
+      - ./backend:/app/backend

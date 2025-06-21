@@ -1,0 +1,28 @@
+# Secrets
+.env
+frontend/.env
+frontend/src/config.js
+
+# Backend
+backend/target/
+backend/.mvn/
+backend/.idea/
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+
+# Editor directories and files
+.vscode/
+!.vscode/extensions.json
+.idea/
+*.iml
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.tsbuildinfo
+*.DS_Store
+Thumbs.db
+/node_modules/

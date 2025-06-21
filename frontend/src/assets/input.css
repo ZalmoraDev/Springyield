@@ -1,0 +1,17 @@
+@import "tailwindcss"; /* From https://tailwindcss.com/docs/installation/tailwind-cli */
+@tailwind utilities;
+
+/* ---------- Custom Tailwind CSS ---------- */
+@theme {
+    --color-sy-50: #f2f8f9;
+    --color-sy-100: #dfeeee;
+    --color-sy-200: #c2dedf;
+    --color-sy-300: #98c5c8;
+    --color-sy-400: #67a4a9;
+    --color-sy-500: #4c898e;
+    --color-sy-600: #3e6b72;
+    --color-sy-700: #3a5d64;
+    --color-sy-800: #354f55;
+    --color-sy-900: #304349;
+    --color-sy-950: #1c2b30;
+}

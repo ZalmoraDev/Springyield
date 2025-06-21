@@ -1,0 +1,717 @@
+openapi: 3.0.0
+info:
+  title: Springyield API
+  version: v0.1
+servers:
+  - url: http://springyield-springboot:8080
+  - url: https://api.springyield.stefvisser.com
+paths:
+  /api/user/{userId}/update:
+    put:
+      tags:
+        - user-controller
+      operationId: updateUser
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdateDto'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/user/{userId}/approve:
+    put:
+      tags:
+        - user-controller
+      operationId: approveUser
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserApprovalDTO'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/account/{accountId}/limits:
+    put:
+      tags:
+        - account-controller
+      operationId: updateAccountLimits
+      parameters:
+        - name: accountId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountLimitsDTO'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/transactions/create:
+    post:
+      tags:
+        - transaction-controller
+      operationId: createTransaction
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransactionDTO'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/transactions/atm:
+    post:
+      tags:
+        - transaction-controller
+      operationId: processAtmTransaction
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransactionDTO'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/auth/signup:
+    post:
+      tags:
+        - auth-controller
+      operationId: signup
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserSignupDto'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AuthResponseDto'
+  /api/auth/login:
+    post:
+      tags:
+        - auth-controller
+      operationId: login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLoginDto'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AuthResponseDto'
+  /api/user/{userId}:
+    get:
+      tags:
+        - user-controller
+      operationId: getUserById
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/user/search:
+    get:
+      tags:
+        - user-controller
+      operationId: getUserByName
+      parameters:
+        - name: query
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: role
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - UNAPPROVED
+              - APPROVED
+              - EMPLOYEE
+              - ADMIN
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: offset
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/transactions/transactions:
+    get:
+      tags:
+        - transaction-controller
+      operationId: getAllTransactions
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TransactionDTO'
+  /api/transactions/search:
+    get:
+      tags:
+        - transaction-controller
+      operationId: searchTransactions
+      parameters:
+        - name: query
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: type
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 10
+        - name: offset
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+        - name: startDate
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: endDate
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: amountFrom
+          in: query
+          required: false
+          schema:
+            type: number
+        - name: amountTo
+          in: query
+          required: false
+          schema:
+            type: number
+        - name: amountOperator
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/transactions/reference/{reference}:
+    get:
+      tags:
+        - transaction-controller
+      operationId: getTransactionsByReference
+      parameters:
+        - name: reference
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/transactions/id/{transactionID}:
+    get:
+      tags:
+        - transaction-controller
+      operationId: getTransactionByID
+      parameters:
+        - name: transactionID
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/transactions/iban/{iban}:
+    get:
+      tags:
+        - transaction-controller
+      operationId: getTransactionsByIBAN
+      parameters:
+        - name: iban
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/account/{userId}:
+    get:
+      tags:
+        - account-controller
+      operationId: getUserAndAccounts
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/account/search:
+    get:
+      tags:
+        - account-controller
+      operationId: getAccountsBySearch
+      parameters:
+        - name: query
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: accountType
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - PAYMENT
+              - SAVINGS
+              - ATM
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - ACTIVE
+              - DEACTIVATED
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: offset
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/account/iban/{iban}:
+    get:
+      tags:
+        - account-controller
+      operationId: getAccountByIban
+      parameters:
+        - name: iban
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/account/addressbook/search:
+    get:
+      tags:
+        - account-controller
+      operationId: searchAccountsByName
+      parameters:
+        - name: query
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AddressBookEntryDTO'
+  /api/user/{userId}/delete:
+    delete:
+      tags:
+        - user-controller
+      operationId: deleteUser
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+components:
+  schemas:
+    UserUpdateDto:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        bsnNumber:
+          type: integer
+          format: int32
+        phoneNumber:
+          type: string
+        role:
+          type: string
+          enum:
+            - UNAPPROVED
+            - APPROVED
+            - EMPLOYEE
+            - ADMIN
+        password:
+          type: string
+    UserApprovalDTO:
+      type: object
+      properties:
+        dailyLimit:
+          type: number
+        absoluteLimit:
+          type: number
+    AccountLimitsDTO:
+      type: object
+      properties:
+        dailyLimit:
+          type: number
+        absoluteLimit:
+          type: number
+    TransactionDTO:
+      type: object
+      properties:
+        transactionId:
+          type: integer
+          format: int64
+        fromAccount:
+          type: string
+        toAccount:
+          type: string
+        transferAmount:
+          type: number
+        description:
+          type: string
+        reference:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        transactionType:
+          type: string
+          enum:
+            - TRANSFER
+            - DEPOSIT
+            - WITHDRAW
+    Account:
+      type: object
+      properties:
+        accountId:
+          type: integer
+          format: int64
+        user:
+          $ref: '#/components/schemas/User'
+        iban:
+          type: string
+        registrationDate:
+          type: string
+          format: date
+        accountType:
+          type: string
+          enum:
+            - PAYMENT
+            - SAVINGS
+            - ATM
+        dailyLimit:
+          type: number
+        absoluteLimit:
+          type: number
+        balance:
+          type: number
+        balanceLimit:
+          type: number
+        status:
+          type: string
+          enum:
+            - ACTIVE
+            - DEACTIVATED
+    AccountProfileDto:
+      type: object
+      properties:
+        accountId:
+          type: integer
+          format: int64
+        iban:
+          type: string
+        user:
+          $ref: '#/components/schemas/User'
+        accountType:
+          type: string
+          enum:
+            - PAYMENT
+            - SAVINGS
+            - ATM
+        balance:
+          type: number
+        dailyLimit:
+          type: number
+        absoluteLimit:
+          type: number
+        status:
+          type: string
+          enum:
+            - ACTIVE
+            - DEACTIVATED
+    GrantedAuthority:
+      type: object
+      properties:
+        authority:
+          type: string
+    User:
+      type: object
+      properties:
+        userId:
+          type: integer
+          format: int64
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        bsnNumber:
+          type: integer
+          format: int32
+        phoneNumber:
+          type: string
+        role:
+          type: string
+          enum:
+            - UNAPPROVED
+            - APPROVED
+            - EMPLOYEE
+            - ADMIN
+        accounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Account'
+        authorities:
+          type: array
+          items:
+            $ref: '#/components/schemas/GrantedAuthority'
+        username:
+          type: string
+        employee:
+          type: boolean
+        approved:
+          type: boolean
+        enabled:
+          type: boolean
+        accountNonExpired:
+          type: boolean
+        credentialsNonExpired:
+          type: boolean
+        accountNonLocked:
+          type: boolean
+    UserSignupDto:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        password:
+          type: string
+        email:
+          type: string
+        phoneNumber:
+          type: string
+        bsnNumber:
+          type: integer
+          format: int32
+        accounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountProfileDto'
+        approvedUser:
+          type: boolean
+    AuthResponseDto:
+      type: object
+      properties:
+        token:
+          type: string
+        user:
+          $ref: '#/components/schemas/UserProfileDto'
+    UserProfileDto:
+      type: object
+      properties:
+        userId:
+          type: integer
+          format: int64
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        bsnNumber:
+          type: integer
+          format: int32
+        phoneNumber:
+          type: string
+        role:
+          type: string
+          enum:
+            - UNAPPROVED
+            - APPROVED
+            - EMPLOYEE
+            - ADMIN
+        accounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountProfileDto'
+    UserLoginDto:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+    AddressBookEntryDTO:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        iban:
+          type: string
