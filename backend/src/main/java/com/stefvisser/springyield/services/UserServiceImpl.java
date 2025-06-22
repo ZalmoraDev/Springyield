@@ -245,39 +245,27 @@ class UserServiceImpl implements UserService {
     @Transactional
     public UserProfileDto updateUser(Long userId, UserUpdateDto userUpdateDto) {
         User user = userRepository.findByUserId(userId);
-        if (user == null) {
-            throw new RuntimeException("User not found with id: " + userId);
-        }
-        //TODO: Rework this method to use a DTO for updating user information
 
-        // Update fields if they are provided in the DTO
-        if (userUpdateDto.getFirstName() != null && !userUpdateDto.getFirstName().isEmpty()) {
-            user.setFirstName(userUpdateDto.getFirstName());
-        }
-        if (userUpdateDto.getLastName() != null && !userUpdateDto.getLastName().isEmpty()) {
-            user.setLastName(userUpdateDto.getLastName());
-        }
-        if (userUpdateDto.getEmail() != null && !userUpdateDto.getEmail().isEmpty()) {
-            user.setEmail(userUpdateDto.getEmail());
-        }
-        if (userUpdateDto.getBsnNumber() != null) {
-            user.setBsnNumber(userUpdateDto.getBsnNumber());
-        }
-        if (userUpdateDto.getPhoneNumber() != null && !userUpdateDto.getPhoneNumber().isEmpty()) {
-            user.setPhoneNumber(userUpdateDto.getPhoneNumber());
-        }
-        if (userUpdateDto.getRole() != null) {
-            user.setRole(userUpdateDto.getRole());
-        }
-        // Update password with BCryptPasswordEncoder
-        if (userUpdateDto.getPassword() != null && !userUpdateDto.getPassword().trim().isEmpty()) {
-            String hashedPassword = passwordEncoder.encode(userUpdateDto.getPassword().trim());
-            user.setPassword(hashedPassword);
+        if (user == null)
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found with id: " + userId);
+
+        // Check for email uniqueness if email is being changed
+        if (userUpdateDto.getEmail() != null && !userUpdateDto.getEmail().equals(user.getEmail())) {
+            User existingUser = userRepository.findByEmail(userUpdateDto.getEmail());
+            if (existingUser != null && !existingUser.getUserId().equals(userId))
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already in use");
         }
 
-        User updatedUser = userRepository.save(user);
-        userRepository.flush(); // Force immediate flush to database
-        return new UserProfileDto(updatedUser);
+        // Prevents empty fields from overwriting existing values
+        if (userUpdateDto.getFirstName() != null) user.setFirstName(userUpdateDto.getFirstName());
+        if (userUpdateDto.getLastName() != null) user.setLastName(userUpdateDto.getLastName());
+        if (userUpdateDto.getEmail() != null) user.setEmail(userUpdateDto.getEmail());
+        if (userUpdateDto.getBsnNumber() != null) user.setBsnNumber(userUpdateDto.getBsnNumber());
+        if (userUpdateDto.getPhoneNumber() != null) user.setPhoneNumber(userUpdateDto.getPhoneNumber());
+        if (userUpdateDto.getRole() != null) user.setRole(userUpdateDto.getRole());
+        if (userUpdateDto.getPassword() != null) user.setPassword(passwordEncoder.encode(userUpdateDto.getPassword().trim()));
+
+        return new UserProfileDto(userRepository.save(user));
     }
 
     @Override

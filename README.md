@@ -1,7 +1,6 @@
 # Banking Application (Springyield)
-A full-stack banking application with a Vue.js frontend and Spring Boot backend.
-
-⚠️DISCLAIMER: This project is a work in progress and is not yet complete! Some necessary files on running the application might be missing because of the .gitignore, which I will fix later!<br>
+![Springyield Employee view](/github/img.png)
+💰 Online Banking Application 🌿 Built with Java Spring Boot & Vue.js ✨ Created as part of a school group project, where I played a major role ℹ️ Clone instead of fork: original repo had exposed credentials outside .gitignore 👤 Major project member: [@Hellaweird](https://github.com/Hellaweird)
 ## Project Overview
 
 This application provides a digital banking platform with features for both customers and administrators. The system is built using:

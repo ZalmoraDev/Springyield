@@ -129,9 +129,6 @@ public class UserController {
     @PutMapping("/{userId}/update")
     public ResponseEntity<?> updateUser(@AuthenticationPrincipal User user, @PathVariable Long userId, @RequestBody UserUpdateDto userUpdateDto) {
         try {
-            if (user == null)
-                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
-
             User executingUser = userService.getUserById(user.getUserId());
 
             // Check if user is updating their own profile or is an employee
@@ -157,6 +154,7 @@ public class UserController {
         }
     }
 
+    //TODO: ????
     @GetMapping("/{userId}")
     public ResponseEntity<?> getUserById(@AuthenticationPrincipal User user, @PathVariable Long userId) {
         try {
@@ -194,6 +192,7 @@ public class UserController {
             userService.deleteUser(user.getUserId(), userId);
             return ResponseEntity.ok().build();
         } catch (ResponseStatusException e) {
+            // Return the reason as the response body for better frontend error handling
             return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
         }
     }
