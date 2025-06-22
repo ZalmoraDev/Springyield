@@ -30,59 +30,26 @@ built using:
 - Transaction history
 - Admin user management
 
-## Project Structure
-
-```
-codegen/
-├── backend/              # Spring Boot application
-│   ├── src/              # Java source code
-│   ├── pom.xml           # Maven dependencies
-│   └── ...
-├── frontend/             # Vue.js application
-│   ├── src/              # Vue source code
-│   │   ├── assets/       # CSS and other assets
-│   │   ├── components/   # Vue components
-│   │   ├── router/       # Vue Router configuration
-│   │   ├── utils/        # Utility functions
-│   │   └── views/        # Vue pages
-│   ├── public/           # Static assets
-│   ├── package.json      # NPM dependencies
-│   └── ...
-└── README.md             # This file
-```
-
-## Getting Started
-
-### Prerequisites
+## Prerequisites
 
 - Node.js (v18+)
 - Java 21
 - Maven
+- Docker
 
-### Running the Frontend
+## How to Run
 
-1. Installing frontend npm dependencies:
-   ```bash
-   cd frontend
-   npm install
-   ```
+First make sure Docker is running: **Docker Service** OR **Desktop Application**
 
-2. Running Vite for frontend development (terminal 1):
-   ```bash
-   cd frontend
-   npm run dev
-   ```
+```bash
+docker-compose up -d
+```
 
-3. Running Tailwind for frontend (terminal 2, open a new terminal):
-   ```bash
-   cd frontend
-   npx @tailwindcss/cli -i ./src/assets/input.css -o ./src/assets/output.css --watch
-   ```
-
-### Running the Backend
-
-1. Open the project in your IDE (IntelliJ IDEA recommended)
-2. Run the Spring Boot application by pressing `SHIFT + F10` or using the run button in the top-right corner
+If you are having trouble it to compile correctly, you can run the following commands:
+```bash
+docker-compose build --no-cache
+docker-compose up -d
+```
 
 ## Technologies Used
 
@@ -98,7 +65,7 @@ codegen/
 ### Backend
 
 - Spring Boot 3
-- spring Boot Starter Security (BCrypt, JWT & config.com.stefvisser.springyield.WebSecurityConfig)
+- spring Boot Starter Security (BCrypt, JWT & WebSecurityConfig)
 - Spring Data JPA
 - Spring Web
 - H2 Database
