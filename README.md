@@ -1,4 +1,5 @@
-# Banking Application (Springyield)
+<h1><img src="./github/springyield_logo.png" alt="Sprinyield Logo" width="32" height="32"> Banking Application (Springyield)</h1>
+
 ![Springyield Employee view](/github/img.png)
 ![Java](https://img.shields.io/badge/java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
 ![SpringBoot](https://img.shields.io/badge/springboot-72b545?style=for-the-badge&logo=springboot&logoColor=white)
