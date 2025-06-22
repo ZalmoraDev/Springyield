@@ -1,8 +1,8 @@
 package com.stefvisser.springyield.services;
 
 import jakarta.transaction.Transactional;
-import com.stefvisser.springyield.dto.TransactionDTO;
-import com.stefvisser.springyield.dto.PaginatedDataDTO;
+import com.stefvisser.springyield.dto.TransactionDto;
+import com.stefvisser.springyield.dto.PaginatedDataDto;
 import com.stefvisser.springyield.models.Account;
 import com.stefvisser.springyield.models.AccountType;
 import com.stefvisser.springyield.models.Transaction;
@@ -108,7 +108,7 @@ public class TransactionServiceImpl implements TransactionService {
      */
     @Override
     @Transactional
-    public Transaction createTransaction(TransactionDTO transaction) {
+    public Transaction createTransaction(TransactionDto transaction) {
         try {
             // Get and validate accounts
             AccountValidationResult accountResult = validateAccounts(transaction);
@@ -180,7 +180,7 @@ public class TransactionServiceImpl implements TransactionService {
      * @return An AccountValidationResult containing the validated source and destination accounts
      * @throws ResponseStatusException If either account does not exist or is invalid
      */
-    private AccountValidationResult validateAccounts(TransactionDTO transaction) {
+    private AccountValidationResult validateAccounts(TransactionDto transaction) {
         Account fromAccount = accountService.getAccountByIban(transaction.getFromAccount());
         Account toAccount = accountService.getAccountByIban(transaction.getToAccount());
 
@@ -237,7 +237,7 @@ public class TransactionServiceImpl implements TransactionService {
      * @return The created and persisted Transaction entity
      * @throws ResponseStatusException If an error occurs while saving the transaction
      */
-    private Transaction createTransactionEntity(TransactionDTO transaction) {
+    private Transaction createTransactionEntity(TransactionDto transaction) {
         Transaction transactionEntity = Transaction.fromDTO(transaction);
         transactionEntity.setTimestamp(LocalDateTime.now());
 
@@ -341,7 +341,7 @@ public class TransactionServiceImpl implements TransactionService {
      * @return A PaginatedDataDTO containing the search results and pagination information
      */
     @Override
-    public PaginatedDataDTO<TransactionDTO> searchTransactions(
+    public PaginatedDataDto<TransactionDto> searchTransactions(
             String query,
             String type,
             int limit,
@@ -366,7 +366,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public Transaction processAtmTransaction(TransactionDTO transactionDTO) {
+    public Transaction processAtmTransaction(TransactionDto transactionDTO) {
         Account account = accountService.getAccountByIban(transactionDTO.getFromAccount());
 
         if (transactionDTO.getTransactionType() == Transaction.TransactionType.WITHDRAW) {

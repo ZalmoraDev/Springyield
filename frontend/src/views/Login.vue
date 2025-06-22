@@ -10,7 +10,6 @@ const email = ref('')
 const password = ref('')
 const handleLogin = async () => {
   try {
-    // Use the imported API_BASE_URL
     const response = await axios.post(`${API_BASE_URL}/auth/login`, {
       email: email.value,
       password: password.value
@@ -19,10 +18,10 @@ const handleLogin = async () => {
     const {token, user} = response.data
     localStorage.setItem('token', token)
     localStorage.setItem('user', JSON.stringify(user))
-
     await router.push('/')
+
   } catch (error) {
-    alert('Invalid credentials')
+    alert(error.response?.data || 'An error occurred during signup');
   }
 }
 

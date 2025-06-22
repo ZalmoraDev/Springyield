@@ -1,6 +1,5 @@
 package com.stefvisser.springyield.services;
 
-import com.github.javafaker.Faker;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import com.stefvisser.springyield.dto.*;
@@ -12,15 +11,14 @@ import com.stefvisser.springyield.utils.FakeUserLoader;
 import org.iban4j.CountryCode;
 import org.iban4j.Iban;
 import org.springframework.context.annotation.Primary;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 @Primary
 @Service
@@ -33,7 +31,7 @@ class UserServiceImpl implements UserService {
     private final TransactionRepository transactionRepository;
 
     public UserServiceImpl(AccountService accountService, UserRepository userRepository,
-                          TransactionRepository transactionRepository, AccountRepository accountRepository) {
+                           TransactionRepository transactionRepository, AccountRepository accountRepository) {
         this.accountService = accountService;
         this.userRepository = userRepository;
         this.transactionRepository = transactionRepository;
@@ -51,10 +49,10 @@ class UserServiceImpl implements UserService {
 
     /**
      * Approves a user by changing their role to APPROVED and creating normal and savings accounts for them.
-     * @ Transactional ensures that the operation is atomic, meaning either all changes are applied or none.
      *
      * @param userId the ID of the user to approve
      * @return UserProfileDto containing the updated user information
+     * @ Transactional ensures that the operation is atomic, meaning either all changes are applied or none.
      */
     @Transactional
     public UserProfileDto approveUser(Long userId, BigDecimal dailyLimit, BigDecimal absoluteLimit) {
@@ -123,37 +121,12 @@ class UserServiceImpl implements UserService {
         return null;
     }
 
-
-    public User signupUser(UserSignupDto userSignupDto) {
-        if (userRepository.existsByEmail(userSignupDto.getEmail())) {
-            return null;
-        } else {
-            User user = new User(
-                    userSignupDto.getFirstName(),
-                    userSignupDto.getLastName(),
-                    passwordEncoder.encode(userSignupDto.getPassword()),
-                    userSignupDto.getEmail(),
-                    userSignupDto.getBsnNumber(),
-                    userSignupDto.getPhoneNumber(),
-                    UserRole.UNAPPROVED,
-                    new ArrayList<>()
-            );
-            try {
-                userRepository.save(user);
-                return user;
-            } catch (Exception e) {
-                return null;
-            }
-        }
-    }
-
     public User getUserById(Long userId) {
         return userRepository.findByUserId(userId);
     }
 
-    @Override
-    public User getUserByEmail(String email) {
-        return userRepository.getUserByEmail(email);
+    public User findByEmail(String mail) {
+        return userRepository.findByEmail(mail);
     }
 
     @Override
@@ -161,7 +134,7 @@ class UserServiceImpl implements UserService {
         return userRepository.findAll();
     }
 
-    public PaginatedDataDTO<UserProfileDto> search(String query, UserRole role, int limit, int offset, boolean isAdmin) {
+    public PaginatedDataDto<UserProfileDto> search(String query, UserRole role, int limit, int offset, boolean isAdmin) {
         return userRepository.search(query, role, limit, offset, isAdmin);
     }
 
@@ -231,27 +204,41 @@ class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void deleteUser(Long userId) {
-        User user = userRepository.findByUserId(userId);
-        if (user == null) {
-            throw new RuntimeException("User not found with id: " + userId);
+    public void deleteUser(Long authenticatedUserId, Long targetUserId) {
+        // Get the authenticated user (the one performing the deletion)
+        User executingUser = this.getUserById(authenticatedUserId);
+        if (executingUser == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authentication required");
         }
 
-        // Detach all accounts from this user before deletion and mark them as inactive
-        if (user.getAccounts() != null && !user.getAccounts().isEmpty()) {
-            for (Account account : user.getAccounts()) {
+        // Get the target user (the one being deleted)
+        User targetUser = this.getUserById(targetUserId);
+        if (targetUser == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+        }
+
+        if (!executingUser.getUserId().equals(targetUserId) && !executingUser.isEmployee()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to delete this user");
+        }
+
+        if (executingUser.getUserId().equals(targetUserId) && executingUser.isEmployee()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Employees cannot delete their own accounts");
+        }
+
+        // Detach all accounts from the target user before deletion and mark them as inactive
+        if (targetUser.getAccounts() != null && !targetUser.getAccounts().isEmpty()) {
+            for (Account account : targetUser.getAccounts()) {
                 account.setUser(null);
                 account.setStatus(AccountStatus.DEACTIVATED); // Mark account as inactive when user is deleted
             }
-            // Save the updated accounts
-            accountRepository.saveAll(user.getAccounts());
 
-            // Clear the accounts list from the user
-            user.getAccounts().clear();
+            // Save the updated accounts, and remove them from the user's list
+            accountRepository.saveAll(targetUser.getAccounts());
+            targetUser.getAccounts().clear();
         }
 
         // Now delete the user
-        userRepository.delete(user);
+        userRepository.delete(targetUser);
     }
 
     @Override

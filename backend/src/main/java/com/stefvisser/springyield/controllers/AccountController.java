@@ -68,7 +68,7 @@ public class AccountController {
             if (offset < 0) offset = 0;
             if (query == null) query = "";
 
-            PaginatedDataDTO<AccountProfileDto> accounts = accountService.searchAccount(query, accountType, status, limit, offset);
+            PaginatedDataDto<AccountProfileDto> accounts = accountService.searchAccount(query, accountType, status, limit, offset);
             return ResponseEntity.ok(accounts);
         } catch (ResponseStatusException e) {
             return ResponseEntity.status(e.getStatusCode()).body(e.getBody());
@@ -79,7 +79,7 @@ public class AccountController {
     public ResponseEntity<?> updateAccountLimits(
             @AuthenticationPrincipal User user,
             @PathVariable Long accountId,
-            @RequestBody AccountLimitsDTO limitsDTO) {
+            @RequestBody AccountLimitsDto limitsDTO) {
         try {
             if (user == null)
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
@@ -104,15 +104,15 @@ public class AccountController {
     }
 
     @GetMapping("/addressbook/search")
-    public ResponseEntity<List<AddressBookEntryDTO>> searchAccountsByName(@RequestParam(required = false) String query) {
-        PaginatedDataDTO<AccountProfileDto> accounts = accountService.searchAccountByName(query);
+    public ResponseEntity<List<AddressBookEntryDto>> searchAccountsByName(@RequestParam(required = false) String query) {
+        PaginatedDataDto<AccountProfileDto> accounts = accountService.searchAccountByName(query);
 
         if (accounts == null || accounts.getData().isEmpty()) {
             return ResponseEntity.notFound().build();
         }
 
-        List<AddressBookEntryDTO> addressBookEntries = accounts.getData().stream()
-                .map(AddressBookEntryDTO::wrap)
+        List<AddressBookEntryDto> addressBookEntries = accounts.getData().stream()
+                .map(AddressBookEntryDto::wrap)
                 .toList();
 
         return ResponseEntity.ok(addressBookEntries);

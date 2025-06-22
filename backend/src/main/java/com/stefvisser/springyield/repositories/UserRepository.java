@@ -1,14 +1,11 @@
 package com.stefvisser.springyield.repositories;
 
 import jakarta.validation.constraints.Email;
-import com.stefvisser.springyield.dto.PaginatedDataDTO;
+import com.stefvisser.springyield.dto.PaginatedDataDto;
 import com.stefvisser.springyield.dto.UserProfileDto;
 import com.stefvisser.springyield.models.User;
 import com.stefvisser.springyield.models.UserRole;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Comparator;
@@ -36,7 +33,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
         ).toList();
     }
 
-    default PaginatedDataDTO<UserProfileDto> search(String query, UserRole role, int limit, int offset, boolean isAdmin) {
+    default PaginatedDataDto<UserProfileDto> search(String query, UserRole role, int limit, int offset, boolean isAdmin) {
         if (limit <= 0 || offset < 0)
             throw new IllegalArgumentException("Limit must be greater than 0 and offset must be non-negative.");
         if (query == null) query = "";
@@ -75,7 +72,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
                 .map(UserProfileDto::wrap)
                 .toList();
 
-        return new PaginatedDataDTO<>(paginatedUsers, totalCount);
+        return new PaginatedDataDto<>(paginatedUsers, totalCount);
     }
 
     User getUserByEmail(@Email String email);

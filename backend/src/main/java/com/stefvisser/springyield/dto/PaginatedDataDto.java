@@ -17,7 +17,7 @@ import java.util.List;
  */
 @Data
 @AllArgsConstructor
-public class PaginatedDataDTO<T> {
+public class PaginatedDataDto<T> {
 
     /**
      * The paginated data content.

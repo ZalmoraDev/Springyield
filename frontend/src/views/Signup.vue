@@ -1,8 +1,8 @@
 <script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import {ref} from 'vue'
+import {useRouter} from 'vue-router'
 import axios from 'axios'
-import { API_BASE_URL } from '@/config.js'; // Import API_BASE_URL
+import {API_BASE_URL} from '@/config.js'; // Import API_BASE_URL
 
 const router = useRouter()
 
@@ -16,7 +16,7 @@ const confirmPassword = ref('')
 
 const handleSignup = async () => {
   if (password.value !== confirmPassword.value) {
-    alert("Wachtwoorden komen niet overeen")
+    alert("Passwords do not match")
     return
   }
 
@@ -30,14 +30,14 @@ const handleSignup = async () => {
       password: password.value // Plaintext, to be salted and hashed in the backend
     })
 
-    const { token, user } = response.data
+    const {token, user} = response.data
+
     localStorage.setItem('token', token)
     localStorage.setItem('user', JSON.stringify(user))
-
     await router.push('/')
 
   } catch (error) {
-    alert(error.response?.data?.message || 'Registratie mislukt')
+    alert(error.response?.data || 'An error occurred during signup');
   }
 }
 </script>
@@ -55,7 +55,8 @@ const handleSignup = async () => {
       <img src="/logo/logo-bt.svg" alt="Logo" class="w-24 h-24 mx-auto mb-2">
       <h1 class="text-2xl font-bold text-center mb-6">Sign-up</h1>
       <p class="font-bold text-red-500 mb-4 text-center bg-red-100 p-2 rounded-xl">
-        ⛔ Warning: This is a demonstration banking app! Do <span class="font-underline">NOT</span> use real credentials, emails, or personal information!
+        ⛔ Warning: This is a demonstration banking app! Do <span class="font-underline">NOT</span> use real credentials,
+        emails, or personal information!
       </p>
 
       <form class="flex flex-col gap-4" @submit.prevent="handleSignup">

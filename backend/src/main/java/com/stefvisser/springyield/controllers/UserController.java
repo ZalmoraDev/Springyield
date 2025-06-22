@@ -75,7 +75,7 @@ public class UserController {
             boolean isAdmin = executingUser.getRole() == UserRole.ADMIN;
 
 
-            PaginatedDataDTO<UserProfileDto> paginatedUsers = userService.search(query, role, limit, offset, isAdmin);
+            PaginatedDataDto<UserProfileDto> paginatedUsers = userService.search(query, role, limit, offset, isAdmin);
 
             return ResponseEntity.ok(paginatedUsers);
         } catch (ResponseStatusException e) {
@@ -95,7 +95,7 @@ public class UserController {
      * @return ResponseEntity containing the updated user profile
      */
     @PutMapping("/{userId}/approve")
-    public ResponseEntity<?> approveUser(@AuthenticationPrincipal User user, @PathVariable Long userId, @RequestBody UserApprovalDTO approvalDTO) {
+    public ResponseEntity<?> approveUser(@AuthenticationPrincipal User user, @PathVariable Long userId, @RequestBody UserApprovalDto approvalDTO) {
         try {
             if (user == null)
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
@@ -184,44 +184,17 @@ public class UserController {
 
             return ResponseEntity.ok(new UserProfileDto(foundUser));
         } catch (ResponseStatusException e) {
-            return ResponseEntity.status(e.getStatusCode()).body(e.getBody());
+            return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
         }
     }
 
-
-    /**
-     * Deletes a user account.
-     * <p>
-     * This endpoint allows an authenticated user to delete their own account
-     * or an employee to delete any user account. It prevents employees from
-     * deleting their own accounts.
-     * </p>
-     *
-     * @param userId the unique identifier of the user to delete
-     * @return ResponseEntity indicating the result of the deletion operation
-     */
-    @DeleteMapping("/{userId}/delete")
+    @PostMapping("/{userId}/delete")
     public ResponseEntity<?> deleteUser(@AuthenticationPrincipal User user, @PathVariable Long userId) {
         try {
-            if (user == null)
-                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
-
-            User executingUser = userService.getUserById(user.getUserId());
-
-            if (executingUser == null || (!executingUser.getUserId().equals(userId) && !user.isEmployee())) {
-                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to delete this user");
-            }
-
-            if (executingUser.getUserId().equals(userId) && executingUser.isEmployee()) {
-                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Employees cannot delete their own accounts");
-            }
-
-
-            userService.deleteUser(userId);
+            userService.deleteUser(user.getUserId(), userId);
             return ResponseEntity.ok().build();
         } catch (ResponseStatusException e) {
-            return ResponseEntity.status(e.getStatusCode()).body(e.getBody());
+            return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
         }
     }
-
 }

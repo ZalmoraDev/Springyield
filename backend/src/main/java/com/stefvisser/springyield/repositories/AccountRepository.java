@@ -2,7 +2,7 @@ package com.stefvisser.springyield.repositories;
 
 import com.stefvisser.springyield.models.*;
 import com.stefvisser.springyield.dto.AccountProfileDto;
-import com.stefvisser.springyield.dto.PaginatedDataDTO;
+import com.stefvisser.springyield.dto.PaginatedDataDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -24,7 +24,7 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     Optional<Account> findByAccountId(Long accountId);
     Account findByIban(String iban);
 
-    default PaginatedDataDTO<AccountProfileDto> searchAccount(String query, AccountType accountType, AccountStatus status, int limit, int offset) {
+    default PaginatedDataDto<AccountProfileDto> searchAccount(String query, AccountType accountType, AccountStatus status, int limit, int offset) {
         if (limit <= 0 || offset < 0)
             throw new IllegalArgumentException("Limit must be greater than 0 and offset must be non-negative.");
         if (query == null) query = "";
@@ -74,7 +74,7 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
                 .limit(limit)
                 .map(AccountProfileDto::new)
                 .toList();
-        return new PaginatedDataDTO<>(paginatedAccounts, totalCount);
+        return new PaginatedDataDto<>(paginatedAccounts, totalCount);
     }
 }
 

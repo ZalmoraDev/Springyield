@@ -12,7 +12,7 @@ import lombok.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AddressBookEntryDTO {
+public class AddressBookEntryDto {
     private String firstName;
     private String lastName;
     private String iban;
@@ -23,8 +23,8 @@ public class AddressBookEntryDTO {
      * @param accountProfileDto the account profile dto to convert
      * @return a new AddressBookEntryDTO with data from the account profile
      */
-    public static AddressBookEntryDTO wrap(AccountProfileDto accountProfileDto) {
-        return new AddressBookEntryDTO(
+    public static AddressBookEntryDto wrap(AccountProfileDto accountProfileDto) {
+        return new AddressBookEntryDto(
                 accountProfileDto.getUser().getFirstName(),
                 accountProfileDto.getUser().getLastName(),
                 accountProfileDto.getIban()

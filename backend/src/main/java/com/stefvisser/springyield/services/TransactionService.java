@@ -1,8 +1,7 @@
 package com.stefvisser.springyield.services;
 
-import com.stefvisser.springyield.dto.TransactionDTO;
-import com.stefvisser.springyield.dto.PaginatedDataDTO;
-import com.stefvisser.springyield.models.Account;
+import com.stefvisser.springyield.dto.TransactionDto;
+import com.stefvisser.springyield.dto.PaginatedDataDto;
 import com.stefvisser.springyield.models.Transaction;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -16,8 +15,8 @@ public interface TransactionService {
     List<Transaction> getTransactionsByReference(String reference);
     List<Transaction> getTransactionsByIBAN(String iban);
 
-    Transaction createTransaction(TransactionDTO transaction) throws ResponseStatusException;
-    PaginatedDataDTO<TransactionDTO> searchTransactions(
+    Transaction createTransaction(TransactionDto transaction) throws ResponseStatusException;
+    PaginatedDataDto<TransactionDto> searchTransactions(
             String query,
             String type,
             int limit,
@@ -29,5 +28,5 @@ public interface TransactionService {
             String amountOperator
     );
 
-    Transaction processAtmTransaction(TransactionDTO transactionDTO);
+    Transaction processAtmTransaction(TransactionDto transactionDTO);
 }

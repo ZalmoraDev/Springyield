@@ -1,8 +1,7 @@
 package com.stefvisser.springyield.controllers;
 
-import com.stefvisser.springyield.dto.AccountProfileDto;
-import com.stefvisser.springyield.dto.TransactionDTO;
-import com.stefvisser.springyield.dto.PaginatedDataDTO;
+import com.stefvisser.springyield.dto.TransactionDto;
+import com.stefvisser.springyield.dto.PaginatedDataDto;
 import com.stefvisser.springyield.models.Account;
 import com.stefvisser.springyield.models.Transaction;
 import com.stefvisser.springyield.models.User;
@@ -18,9 +17,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * REST controller for managing banking transactions.
@@ -59,10 +56,10 @@ public class TransactionController {
      * @return ResponseEntity containing a list of all transactions as DTOs
      */
     @GetMapping("/transactions")
-    public ResponseEntity<List<TransactionDTO>> getAllTransactions() {
+    public ResponseEntity<List<TransactionDto>> getAllTransactions() {
         return ResponseEntity.ok(transactionService.getAllTransactions()
                 .stream()
-                .map(TransactionDTO::wrap)
+                .map(TransactionDto::wrap)
                 .toList());
     }
 
@@ -79,7 +76,7 @@ public class TransactionController {
      * @return ResponseEntity containing the created transaction as DTO
      */
     @PostMapping("/create")
-    public ResponseEntity<?> createTransaction(@AuthenticationPrincipal User user, @RequestBody() TransactionDTO transactionDTO) {
+    public ResponseEntity<?> createTransaction(@AuthenticationPrincipal User user, @RequestBody() TransactionDto transactionDTO) {
         try {
             if (user == null)
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
@@ -102,7 +99,7 @@ public class TransactionController {
 
             Transaction transaction = transactionService.createTransaction(transactionDTO);
 
-            return ResponseEntity.status(HttpStatus.CREATED).body(TransactionDTO.wrap(transaction));
+            return ResponseEntity.status(HttpStatus.CREATED).body(TransactionDto.wrap(transaction));
         } catch (ResponseStatusException e) {
             // Handle specific exceptions and return appropriate HTTP status codes
             return ResponseEntity.status(e.getStatusCode()).body(e.getBody());
@@ -154,7 +151,7 @@ public class TransactionController {
             if (offset < 0) offset = 0;
             if (query == null) query = "";
 
-            PaginatedDataDTO<TransactionDTO> transactions = transactionService.searchTransactions(
+            PaginatedDataDto<TransactionDto> transactions = transactionService.searchTransactions(
                     query, type, limit, offset, startDate, endDate, amountFrom, amountTo, amountOperator
             );
 
@@ -199,7 +196,7 @@ public class TransactionController {
 
             // At this point, the user either owns the account or is an employee, so they have permission to view the transactions
             return ResponseEntity.ok(transactions.stream()
-                    .map(TransactionDTO::wrap)
+                    .map(TransactionDto::wrap)
                     .toList());
         } catch (ResponseStatusException e) {
             return ResponseEntity.status(e.getStatusCode()).body(e.getBody());
@@ -232,7 +229,7 @@ public class TransactionController {
             }
             return ResponseEntity.ok(transactionService.getTransactionsByReference(reference)
                     .stream()
-                    .map(TransactionDTO::wrap)
+                    .map(TransactionDto::wrap)
                     .toList());
         } catch (ResponseStatusException e) {
             return ResponseEntity.status(e.getStatusCode()).body(e.getBody());
@@ -265,7 +262,7 @@ public class TransactionController {
             if (transaction == null) {
                 return ResponseEntity.notFound().build();
             }
-            return ResponseEntity.ok(TransactionDTO.wrap(transaction));
+            return ResponseEntity.ok(TransactionDto.wrap(transaction));
         } catch (ResponseStatusException e) {
             return ResponseEntity.status(e.getStatusCode()).body(e.getBody());
         }
@@ -283,7 +280,7 @@ public class TransactionController {
      * @return ResponseEntity with the result of the transaction creation
      */
     @PostMapping("/atm")
-    public ResponseEntity<?> processAtmTransaction(@RequestBody TransactionDTO body) {
+    public ResponseEntity<?> processAtmTransaction(@RequestBody TransactionDto body) {
         // Retrieve the account by IBAN from the request
         Account fromAccount = accountService.getAccountByIban(body.getFromAccount());
 
@@ -302,7 +299,7 @@ public class TransactionController {
         }
 
         // Retrieve the special ATM user by email
-        User executingUser = userService.getUserByEmail("atms@springyield.com");
+        User executingUser = userService.findByEmail("atms@springyield.com");
 
         // If the ATM user does not exist, return 403
         if (executingUser == null) {

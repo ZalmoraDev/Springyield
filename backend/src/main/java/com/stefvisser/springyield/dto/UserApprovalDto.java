@@ -2,16 +2,16 @@ package com.stefvisser.springyield.dto;
 
 import java.math.BigDecimal;
 
-public class UserApprovalDTO {
+public class UserApprovalDto {
     private BigDecimal dailyLimit;
     private BigDecimal absoluteLimit;
 
     // Default constructor
-    public UserApprovalDTO() {
+    public UserApprovalDto() {
     }
 
     // Constructor with parameters
-    public UserApprovalDTO(BigDecimal dailyLimit, BigDecimal absoluteLimit) {
+    public UserApprovalDto(BigDecimal dailyLimit, BigDecimal absoluteLimit) {
         this.dailyLimit = dailyLimit;
         this.absoluteLimit = absoluteLimit;
     }

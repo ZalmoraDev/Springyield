@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class TransactionDTO {
+public class TransactionDto {
     /**
      * The unique identifier for the transaction.
      */
@@ -70,8 +70,8 @@ public class TransactionDTO {
      * @param transaction The Transaction entity to be wrapped
      * @return A new TransactionDTO containing data from the provided transaction
      */
-    public static TransactionDTO wrap(Transaction transaction) {
-        return new TransactionDTO(
+    public static TransactionDto wrap(Transaction transaction) {
+        return new TransactionDto(
                 transaction.getTransactionId(),
                 transaction.getFromAccount(),
                 transaction.getToAccount(),
@@ -83,8 +83,8 @@ public class TransactionDTO {
         );
     }
 
-    public static TransactionDTO fromTransaction(Transaction transaction) {
-        return new TransactionDTO(
+    public static TransactionDto fromTransaction(Transaction transaction) {
+        return new TransactionDto(
                 transaction.getTransactionId(),
                 transaction.getFromAccount(),
                 transaction.getToAccount(),

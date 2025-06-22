@@ -2,7 +2,7 @@ package com.stefvisser.springyield.models;
 
 import jakarta.persistence.*;
 import lombok.*;
-import com.stefvisser.springyield.dto.TransactionDTO;
+import com.stefvisser.springyield.dto.TransactionDto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -41,7 +41,7 @@ public class Transaction implements Cloneable {
     @Column(name = "transaction_type")
     private TransactionType transactionType;
 
-    public static Transaction fromDTO(TransactionDTO transactionDTO) {
+    public static Transaction fromDTO(TransactionDto transactionDTO) {
         Transaction transaction = new Transaction();
         transaction.setFromAccount(transactionDTO.getFromAccount());
         transaction.setToAccount(transactionDTO.getToAccount());

@@ -15,7 +15,7 @@ import java.math.BigDecimal;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AccountLimitsDTO {
+public class AccountLimitsDto {
     // Getters and setters
     private BigDecimal dailyLimit;
     private BigDecimal absoluteLimit;

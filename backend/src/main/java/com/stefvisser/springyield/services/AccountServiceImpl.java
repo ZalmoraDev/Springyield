@@ -2,7 +2,7 @@ package com.stefvisser.springyield.services;
 
 import jakarta.transaction.Transactional;
 import com.stefvisser.springyield.dto.AccountProfileDto;
-import com.stefvisser.springyield.dto.PaginatedDataDTO;
+import com.stefvisser.springyield.dto.PaginatedDataDto;
 import com.stefvisser.springyield.models.Account;
 import com.stefvisser.springyield.models.AccountStatus;
 import com.stefvisser.springyield.models.AccountType;
@@ -54,14 +54,14 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public PaginatedDataDTO<AccountProfileDto> searchAccountByName(String query) {
+    public PaginatedDataDto<AccountProfileDto> searchAccountByName(String query) {
         query = query.toLowerCase();
         query = query.trim();
         return accountRepository.searchAccount(query, AccountType.PAYMENT, null, 50, 0);
     }
 
     @Override
-    public PaginatedDataDTO<AccountProfileDto> searchAccount(String query, AccountType accountType, AccountStatus status, int limit, int offset) {
+    public PaginatedDataDto<AccountProfileDto> searchAccount(String query, AccountType accountType, AccountStatus status, int limit, int offset) {
         return accountRepository.searchAccount(query, accountType, status, limit, offset);
     }
 

@@ -12,7 +12,7 @@ import lombok.Getter;
  * </p>
  */
 @Getter
-public class AuthResponseDto {
+public class AuthSessionDto {
     /**
      * The JWT authentication token.
      * <p>
@@ -37,7 +37,7 @@ public class AuthResponseDto {
      * @param token The JWT authentication token for the authenticated user
      * @param user The profile information of the authenticated user
      */
-    public AuthResponseDto(String token, UserProfileDto user) {
+    public AuthSessionDto(String token, UserProfileDto user) {
         this.token = token;
         this.user = user;
     }

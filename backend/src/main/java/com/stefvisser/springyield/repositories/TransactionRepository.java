@@ -1,8 +1,8 @@
 package com.stefvisser.springyield.repositories;
 
 import com.stefvisser.springyield.models.Transaction;
-import com.stefvisser.springyield.dto.PaginatedDataDTO;
-import com.stefvisser.springyield.dto.TransactionDTO;
+import com.stefvisser.springyield.dto.PaginatedDataDto;
+import com.stefvisser.springyield.dto.TransactionDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -23,7 +23,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     List<Transaction> findByFromAccountOrToAccount(String fromAccount, String toAccount);
     List<Transaction> findAll();
 
-    default PaginatedDataDTO<TransactionDTO> searchTransactions(
+    default PaginatedDataDto<TransactionDto> searchTransactions(
             String searchQuery,
             String type,
             LocalDateTime startDate,
@@ -96,14 +96,14 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
         int totalCount = filteredTransactions.size();
 
         // Apply pagination and sorting
-        List<TransactionDTO> paginatedTransactionDTOs = filteredTransactions.stream()
+        List<TransactionDto> paginatedTransactionDTOs = filteredTransactions.stream()
                 .sorted(Comparator.comparing(Transaction::getTimestamp, Comparator.nullsLast(Comparator.reverseOrder())))
                 .skip(offset)
                 .limit(limit)
-                .map(TransactionDTO::wrap)
+                .map(TransactionDto::wrap)
                 .toList();
 
-        return new PaginatedDataDTO<>(paginatedTransactionDTOs, totalCount);
+        return new PaginatedDataDto<>(paginatedTransactionDTOs, totalCount);
     }
 }
 
