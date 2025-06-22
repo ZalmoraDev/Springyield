@@ -1,7 +1,7 @@
 # Banking Application (Springyield)
 A full-stack banking application with a Vue.js frontend and Spring Boot backend.
 
-⚠️DISCLAIMER: This project is a work in progress and is not yet complete. Current instructions on how to run the application are not accurate!<br>
+⚠️DISCLAIMER: This project is a work in progress and is not yet complete! Some necessary files on running the application might be missing because of the .gitignore, which I will fix later!<br>
 ## Project Overview
 
 This application provides a digital banking platform with features for both customers and administrators. The system is built using:
@@ -12,10 +12,10 @@ This application provides a digital banking platform with features for both cust
 
 ## Features
 
-- models.com.stefvisser.springyield.User authentication and authorization, using JWT
+- User authentication and authorization, using JWT
 - Customer & Employee dashboard
-- models.com.stefvisser.springyield.Account management
-- models.com.stefvisser.springyield.Transaction history
+- Account management
+- Transaction history
 - Admin user management
 
 ## Project Structure
