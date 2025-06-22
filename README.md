@@ -1,4 +1,10 @@
-<h1><img src="./github/springyield_logo.png" alt="Sprinyield Logo" width="32" height="32"> Banking Application (Springyield)</h1>
+<div style="text-align: center; background-color: #3e6b72; padding: 20px; border-radius: 48px;">
+  <h1 style="display: inline-flex; align-items: center; gap: 12px; margin: 0;">
+    <img src="./frontend/public/logo/logo-w.svg" alt="Springyield Logo" width="48" height="48">
+    <span style="line-height: 1;">Springyield</span>
+  </h1>
+</div>
+
 
 ![Springyield Employee view](/github/img.png)
 ![Java](https://img.shields.io/badge/java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
