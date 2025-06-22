@@ -1,10 +1,7 @@
-<div style="text-align: center; background-color: #3e6b72; padding: 20px; border-radius: 48px;">
-  <h1 style="display: inline-flex; align-items: center; gap: 12px; margin: 0;">
-    <img src="./frontend/public/logo/logo-w.svg" alt="Springyield Logo" width="48" height="48">
-    <span style="line-height: 1;">Springyield</span>
-  </h1>
-</div>
-
+<h1>
+   <img src="./frontend/public/logo/logo-w.svg" alt="Springyield Logo" width="" height="30">
+   Springyield
+</h1>
 
 ![Springyield Employee view](/github/img.png)
 ![Java](https://img.shields.io/badge/java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
@@ -12,10 +9,14 @@
 ![TailwindCSS](https://img.shields.io/badge/tailwindcss-38B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white)
 ![Vue.js](https://img.shields.io/badge/vuejs-35495e.svg?style=for-the-badge&logo=vuedotjs&logoColor=%234FC08D)
 ![Docker](https://img.shields.io/badge/docker-0db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)<br>
-💰 Online Banking Application 🌿 Built with Java Spring Boot & Vue.js ✨ Created as part of a school group project, where I played a major role ℹ️ Clone instead of fork: original repo had exposed credentials outside .gitignore 👤 Major project member: [@Hellaweird](https://github.com/Hellaweird)
+💰 Online Banking Application 🌿 Built with Java Spring Boot & Vue.js ✨ Created as part of a school group project, where I
+played a major role ℹ️ Clone instead of fork: original repo had exposed credentials outside .gitignore 👤 Major project
+member: [@Hellaweird](https://github.com/Hellaweird)
+
 ## Project Overview
 
-This application provides a digital banking platform with features for both customers and administrators. The system is built using:
+This application provides a digital banking platform with features for both customers and administrators. The system is
+built using:
 
 - **Frontend**: Vue.js 3 with Tailwind CSS
 - **Backend**: Spring Boot 3 with Java 21
@@ -86,6 +87,7 @@ codegen/
 ## Technologies Used
 
 ### Frontend
+
 - Vue.js 3
 - Vue Router
 - Tailwind CSS
@@ -94,6 +96,7 @@ codegen/
 - JWT Authentication
 
 ### Backend
+
 - Spring Boot 3
 - spring Boot Starter Security (BCrypt, JWT & config.com.stefvisser.springyield.WebSecurityConfig)
 - Spring Data JPA
