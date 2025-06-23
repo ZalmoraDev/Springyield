@@ -62,6 +62,11 @@ public class AuthServiceImpl implements AuthService {
     public AuthSessionDto login(UserLoginDto loginDto) {
         // Login user after successful signup
         User user = authRepository.findByEmail(loginDto.getEmail());
+
+        if (user == null || !passwordEncoder.matches(loginDto.getPassword(), user.getPassword()))
+            // If the user does not exist, throw an unauthorized exception
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid email or password");
+
         return createNewLoginSession(user);
     }
 

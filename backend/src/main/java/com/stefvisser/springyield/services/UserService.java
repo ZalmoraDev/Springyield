@@ -22,7 +22,7 @@ public interface UserService {
     void addDefaultUsers();
     UserProfileDto approveUser(Long userId, BigDecimal dailyLimit, BigDecimal absoluteLimit);
 
-    void deleteUser(Long authenticatedUserId, Long targetUserId);
+    void deleteUser(User execUser, Long targetUserId);
 
     UserProfileDto updateUser(Long userId, UserUpdateDto userUpdateDto);
 

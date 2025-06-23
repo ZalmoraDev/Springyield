@@ -8,7 +8,10 @@ const router = useRouter()
 
 const email = ref('')
 const password = ref('')
+const errorMessage = ref('')
+
 const handleLogin = async () => {
+  errorMessage.value = ''
   try {
     const response = await axios.post(`${API_BASE_URL}/auth/login`, {
       email: email.value,
@@ -21,10 +24,9 @@ const handleLogin = async () => {
     await router.push('/')
 
   } catch (error) {
-    alert(error.response?.data || 'An error occurred during signup');
+    errorMessage.value = error.response?.data || 'An error occurred during login';
   }
 }
-
 </script>
 
 
@@ -33,6 +35,9 @@ const handleLogin = async () => {
     <div class="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
       <img src="/logo/logo-bt.svg" alt="Logo" class="w-36 h-36 mx-auto mb-2">
       <h1 class="text-2xl font-bold text-center mb-6">Login</h1>
+      <div v-if="errorMessage" class="error-message">
+        ⛔{{ errorMessage }}
+      </div>
       <form @submit.prevent="handleLogin">
 
         <div class="mb-4">

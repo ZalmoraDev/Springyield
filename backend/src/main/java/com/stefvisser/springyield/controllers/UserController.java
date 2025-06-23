@@ -186,10 +186,10 @@ public class UserController {
         }
     }
 
-    @PostMapping("/{userId}/delete")
-    public ResponseEntity<?> deleteUser(@AuthenticationPrincipal User user, @PathVariable Long userId) {
+    @PostMapping("/{targetUserId}/delete")
+    public ResponseEntity<?> deleteUser(@AuthenticationPrincipal User execUser, @PathVariable Long targetUserId) {
         try {
-            userService.deleteUser(user.getUserId(), userId);
+            userService.deleteUser(execUser, targetUserId);
             return ResponseEntity.ok().build();
         } catch (ResponseStatusException e) {
             // Return the reason as the response body for better frontend error handling

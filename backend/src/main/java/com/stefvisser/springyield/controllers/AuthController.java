@@ -2,7 +2,6 @@ package com.stefvisser.springyield.controllers;
 
 import com.stefvisser.springyield.dto.AuthSessionDto;
 import com.stefvisser.springyield.dto.UserLoginDto;
-import com.stefvisser.springyield.dto.UserProfileDto;
 import com.stefvisser.springyield.dto.UserSignupDto;
 import com.stefvisser.springyield.services.AuthService;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +27,7 @@ public class AuthController {
             return ResponseEntity.ok(response);
         } catch (ResponseStatusException e) {
             // Catch any response status exceptions and return the appropriate HTTP status and message
-            return ResponseEntity.status(e.getStatusCode()).body(e.getBody());
+            return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
         }
     }
 

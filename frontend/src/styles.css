@@ -15,3 +15,9 @@
     --color-sy-900: #304349;
     --color-sy-950: #1c2b30;
 }
+
+@layer components {
+    .error-message {
+        @apply bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4;
+    }
+}

@@ -204,9 +204,8 @@ class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void deleteUser(Long authenticatedUserId, Long targetUserId) {
+    public void deleteUser(User executingUser, Long targetUserId) {
         // Get the authenticated user (the one performing the deletion)
-        User executingUser = this.getUserById(authenticatedUserId);
         if (executingUser == null) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authentication required");
         }
