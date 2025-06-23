@@ -1,14 +1,17 @@
 <script setup>
 import {ref} from 'vue'
 import {useRouter} from 'vue-router'
+
 import axios from 'axios'
-import {API_BASE_URL} from '@/config.js'; // <-- Import API_BASE_URL
+
+import {API_BASE_URL} from '@/config.js'
+
 
 const router = useRouter()
+const errorMessage = ref('')
 
 const email = ref('')
 const password = ref('')
-const errorMessage = ref('')
 
 const handleLogin = async () => {
   errorMessage.value = ''

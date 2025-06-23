@@ -1,10 +1,14 @@
 <script setup>
 import {ref} from 'vue'
 import {useRouter} from 'vue-router'
+
 import axios from 'axios'
-import {API_BASE_URL} from '@/config.js'; // Import API_BASE_URL
+
+import {API_BASE_URL} from '@/config.js'
+
 
 const router = useRouter()
+const errorMessage = ref('')
 
 const firstName = ref('')
 const lastName = ref('')
@@ -15,10 +19,9 @@ const password = ref('')
 const confirmPassword = ref('')
 
 const handleSignup = async () => {
-  if (password.value !== confirmPassword.value) {
-    alert("Passwords do not match")
-    return
-  }
+  errorMessage.value = ''
+  if (password.value !== confirmPassword.value)
+    return errorMessage.value = 'Passwords do not match'
 
   try {
     const response = await axios.post(`${API_BASE_URL}/auth/signup`, { // Use API_BASE_URL
@@ -37,10 +40,11 @@ const handleSignup = async () => {
     await router.push('/')
 
   } catch (error) {
-    alert(error.response?.data || 'An error occurred during signup');
+    errorMessage.value = error.response?.data || 'An error occurred during signup';
   }
 }
 </script>
+
 
 <template>
   <div class="min-h-screen flex items-center justify-center bg-gray-200">
@@ -54,8 +58,11 @@ const handleSignup = async () => {
       </router-link>
       <img src="/logo/logo-bt.svg" alt="Logo" class="w-24 h-24 mx-auto mb-2">
       <h1 class="text-2xl font-bold text-center mb-6">Sign-up</h1>
-      <p class="font-bold text-red-500 mb-4 text-center bg-red-100 p-2 rounded-xl">
-        ⛔ Warning: This is a demonstration banking app! Do <span class="font-underline">NOT</span> use real credentials,
+      <div v-if="errorMessage" class="error-message">
+        ⛔{{ errorMessage }}
+      </div>
+      <p class="font-bold bg-yellow-300 text-black px-4 py-3 rounded mb-4">
+        ⚠️ Warning: This is a demonstration banking app! Do <span class="font-underline">NOT</span> use real credentials,
         emails, or personal information!
       </p>
 
