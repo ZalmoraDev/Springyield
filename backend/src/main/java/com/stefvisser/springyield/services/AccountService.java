@@ -18,4 +18,9 @@ public interface AccountService {
     PaginatedDataDto<AccountProfileDto> searchAccount(String query, AccountType accountType, AccountStatus status, int limit, int offset);
     Account updateAccountLimits(Long accountId, BigDecimal dailyLimit, BigDecimal absoluteLimit);
     PaginatedDataDto<AccountProfileDto> searchAccountByName(String query);
+
+
+    // Added methods for DataSeeder
+    void saveAll(List<Account> accounts);
+    void save(Account account);
 }

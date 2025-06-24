@@ -15,16 +15,15 @@ import java.util.stream.Stream;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer> {
-    /// Return UserModel object including salted password.
-    /// Used for comparing against login credentials from front-end login screen.
-    /// UserService returns a UserProfileDto object from the User model, which lacks the salted password field for security.
-    User findByEmail(String email);
+
 
     /// Return status on whether a user with the given email exists in the database
     /// when creating a user
     boolean existsByEmail(String email);
 
     User findByUserId(Long userId);
+
+    User findByEmail(String email);
 
     default List<User> findByName(String firstName, String lastName) {
         return this.findAll().stream().filter(user ->
@@ -56,6 +55,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
             );
         }
 
+        // If the user is not an admin, filter out ADMIN and EMPLOYEE roles
         if (!isAdmin) {
             userStream = userStream.filter(user -> !user.getRole().equals(UserRole.ADMIN)
                     && !user.getRole().equals(UserRole.EMPLOYEE));
@@ -74,6 +74,4 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
         return new PaginatedDataDto<>(paginatedUsers, totalCount);
     }
-
-    User getUserByEmail(@Email String email);
 }

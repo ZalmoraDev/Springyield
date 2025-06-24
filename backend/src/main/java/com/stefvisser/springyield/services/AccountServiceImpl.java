@@ -111,4 +111,16 @@ public class AccountServiceImpl implements AccountService {
     public boolean validateTransaction(Account account, Transaction transaction) {
         return false;
     }
+
+
+
+    @Override
+    public void saveAll(List<Account> accounts) {
+        accountRepository.saveAll(accounts);
+    }
+
+    @Override
+    public void save(Account account) {
+        accountRepository.save(account);
+    }
 }

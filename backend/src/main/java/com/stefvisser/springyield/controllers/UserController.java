@@ -25,81 +25,14 @@ import org.springframework.web.server.ResponseStatusException;
 public class UserController {
 
     private final UserService userService;
-    private final AuthService authService;
 
     /**
      * Constructs a new UserController with the required services.
      *
      * @param userService service for user-related operations
-     * @param authService service for authentication and token management
      */
-    public UserController(UserService userService, AuthService authService) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.authService = authService;
-    }
-
-    /**
-     * Searches for users based on specified criteria with pagination.
-     * <p>
-     * This endpoint allows filtering users by a search query and role,
-     * with results returned in a paginated format for efficient data transfer.
-     * </p>
-     *
-     * @param query optional search string to filter users by name or other attributes
-     * @param role optional role filter (e.g., CUSTOMER, EMPLOYEE)
-     * @param limit maximum number of results per page (defaults to 10)
-     * @param offset starting position for pagination (defaults to 0)
-     * @return ResponseEntity containing paginated execUser search results
-     */
-    @GetMapping("/search")
-    public ResponseEntity<?> getUserByName(
-            @AuthenticationPrincipal User execUser,
-            @RequestParam(required = false) String query,
-            @RequestParam(required = false) UserRole role,
-            @RequestParam(required = false) Integer limit,
-            @RequestParam(required = false) int offset)
-    {
-        try {
-            if (execUser == null)
-                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
-
-            if (!execUser.isEmployee())
-                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to search users");
-
-
-            if (limit == null) limit = 10;
-            if (offset < 0) offset = 0;
-            if (query == null) query = "";
-            boolean isAdmin = execUser.getRole() == UserRole.ADMIN;
-
-
-            PaginatedDataDto<UserProfileDto> paginatedUsers = userService.search(query, role, limit, offset, isAdmin);
-
-            return ResponseEntity.ok(paginatedUsers);
-        } catch (ResponseStatusException e) {
-            return ResponseEntity.status(e.getStatusCode()).body(e.getBody());
-        }
-    }
-
-    /**
-     * Approves a execUser account, enabling full system access.
-     * <p>
-     * This endpoint changes a execUser's approval status to approved,
-     * which typically enables them to perform banking operations.
-     * This action is generally restricted to administrative users.
-     * </p>
-     *
-     * @param userId the unique identifier of the execUser to approve
-     * @return ResponseEntity containing the updated execUser profile
-     */
-    @PutMapping("/{userId}/approve")
-    public ResponseEntity<?> approveUser(@AuthenticationPrincipal User execUser, @PathVariable Long userId, @RequestBody UserApprovalDto approvalDTO) {
-        try {
-            userService.approveUser(execUser, userId, approvalDTO.getDailyLimit(), approvalDTO.getAbsoluteLimit());
-            return ResponseEntity.ok().build();
-        } catch (ResponseStatusException e) {
-            return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
-        }
     }
 
     /**
@@ -119,6 +52,58 @@ public class UserController {
         try {
             User targetUser = userService.getUserById(execUser, targetUserId);
             return ResponseEntity.ok(new UserProfileDto(targetUser));
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
+        }
+    }
+
+    /**
+     * Searches for users based on specified criteria with pagination.
+     * <p>
+     * This endpoint allows filtering users by a search query and role,
+     * with results returned in a paginated format for efficient data transfer.
+     * </p>
+     *
+     * @param execUser the authenticated user performing the request
+     * @param query optional search string to filter users by name or other attributes
+     * @param role optional role filter (e.g., CUSTOMER, EMPLOYEE)
+     * @param limit maximum number of results per page (defaults to 10)
+     * @param offset starting position for pagination (defaults to 0)
+     * @return ResponseEntity containing paginated execUser search results
+     */
+    @GetMapping("/search")
+    public ResponseEntity<?> search(
+            @AuthenticationPrincipal User execUser,
+            @RequestParam(required = false) String query,
+            @RequestParam(required = false) UserRole role,
+            @RequestParam(required = false) int limit,
+            @RequestParam(required = false) int offset)
+    {
+        try {
+            PaginatedDataDto<UserProfileDto> paginatedUsers = userService.search(execUser, query, role, limit, offset);
+            return ResponseEntity.ok(paginatedUsers);
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(e.getBody());
+        }
+    }
+
+    /**
+     * Approves a execUser account, enabling full system access.
+     * <p>
+     * This endpoint changes a execUser's approval status to approved,
+     * which typically enables them to perform banking operations.
+     * This action is generally restricted to administrative users.
+     * </p>
+     *
+     * @param execUser the authenticated user performing the request
+     * @param userId the unique identifier of the execUser to approve
+     * @return ResponseEntity containing the updated execUser profile
+     */
+    @PutMapping("/{userId}/approve")
+    public ResponseEntity<?> approveUser(@AuthenticationPrincipal User execUser, @PathVariable Long userId, @RequestBody UserApprovalDto approvalDTO) {
+        try {
+            userService.approveUser(execUser, userId, approvalDTO.getDailyLimit(), approvalDTO.getAbsoluteLimit());
+            return ResponseEntity.ok().build();
         } catch (ResponseStatusException e) {
             return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
         }

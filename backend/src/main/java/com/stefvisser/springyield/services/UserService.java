@@ -12,19 +12,17 @@ import java.util.List;
 
 /// Because @Service is used in the implementation
 public interface UserService {
-    List<User> getAllUsers();
-
-    // Added methods for DataSeeder
-    void saveAll(List<User> users);
-    void save(User user);
-
-    PaginatedDataDto<UserProfileDto> search(String query, UserRole role, int limit, int offset, boolean isAdmin);
+    // API methods
+    User getUserById(User execUser, Long targetUserId);
+    PaginatedDataDto<UserProfileDto> search(User execUser, String query, UserRole role, int limit, int offset);
 
     void approveUser(User execUser, Long userId, BigDecimal dailyLimit, BigDecimal absoluteLimit);
-
-    User getUserById(User execUser, Long targetUserId);
-    void deleteUser(User execUser, Long targetUserId);
     UserProfileDto updateUser(User execUser, Long targetUserId, UserUpdateDto userUpdateDto);
+    void deleteUser(User execUser, Long targetUserId);
 
+
+    // Non-API methods
     User findByEmail(String mail);
+    void saveAll(List<User> users);
+    void save(User user);
 }

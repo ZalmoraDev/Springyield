@@ -7,7 +7,6 @@ import jakarta.transaction.Transactional;
 import com.stefvisser.springyield.dto.*;
 import com.stefvisser.springyield.models.*;
 import com.stefvisser.springyield.repositories.AccountRepository;
-import com.stefvisser.springyield.repositories.TransactionRepository;
 import com.stefvisser.springyield.repositories.UserRepository;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpStatus;
@@ -21,51 +20,84 @@ import org.springframework.web.server.ResponseStatusException;
 class UserServiceImpl implements UserService {
     private final AccountService accountService;
     private final UserRepository userRepository;
-    private final AccountRepository accountRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(AccountService accountService, UserRepository userRepository,
-                           TransactionRepository transactionRepository, AccountRepository accountRepository) {
+    public UserServiceImpl(AccountService accountService, UserRepository userRepository, AccountRepository accountRepository) {
         this.accountService = accountService;
         this.userRepository = userRepository;
-        this.accountRepository = accountRepository;
         this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    // Default IoC Methods
+    // API Methods
     // -----------------------------------------------------------------------------------------------------------------
 
-    public User findByEmail(String mail) {
-        return userRepository.findByEmail(mail);
+    // TODO: Change to UserProfileDto (Otherwise password is returned, which we don't want or need)
+    /**
+     * Retrieves a user profile by its unique ID.
+     * <p>
+     * Allows fetching the details of a specific user by their ID.
+     * It requires the authenticated user's credentials to ensure proper access control.
+     * Also requires execUser to be an employee or the user themselves to retrieve their own profile.
+     * </p>
+     *
+     * @param execUser     the authenticated user performing the request
+     * @param targetUserId the unique identifier of the target user to retrieve
+     * @return User object containing the requested user's profile information
+     */
+    public User getUserById(User execUser, Long targetUserId) {
+        if (execUser == null)
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
+
+        if (!execUser.getUserId().equals(targetUserId) && !execUser.isEmployee())
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to view this user's profile");
+
+        User targetUser = userRepository.findByUserId(targetUserId);
+        if (targetUser == null)
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found with id: " + targetUserId);
+
+        // Check if execUser is trying to view their own profile, then allow it
+        // Restrict employees from viewing other employee profiles unless they are admins
+        if (!execUser.getUserId().equals(targetUser.getUserId()))
+            if (targetUser.getRole() == UserRole.EMPLOYEE || targetUser.getRole() == UserRole.ADMIN)
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to view employee/admin profiles");
+
+        return targetUser;
     }
 
-    @Override
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
-    }
+    /**
+     * Searches for users based on specified criteria with pagination.
+     * <p>
+     * This endpoint allows filtering users by a search query and role,
+     * with results returned in a paginated format for efficient data transfer.
+     * </p>
+     *
+     * @param execUser the authenticated user performing the request
+     * @param query optional search string to filter users by name or other attributes
+     * @param role optional role filter (e.g., CUSTOMER, EMPLOYEE)
+     * @param limit maximum number of results per page (defaults to 10)
+     * @param offset starting position for pagination (defaults to 0)
+     * @return PaginatedDataDto containing paginated user search results
+     */
+    public PaginatedDataDto<UserProfileDto> search(User execUser, String query, UserRole role, int limit, int offset) {
+        if (execUser == null)
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
 
-    @Override
-    public void saveAll(List<User> users) {
-        userRepository.saveAll(users);
-    }
+        if (!execUser.isEmployee())
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to search users");
 
-    @Override
-    public void save(User user) {
-        userRepository.save(user);
-    }
+        if (limit <= 0) limit = 10;  // Check if limit is zero or negative
+        if (offset < 0) offset = 0;
+        if (query == null) query = "";
+        boolean isAdmin = execUser.getRole() == UserRole.ADMIN;
 
-    // -----------------------------------------------------------------------------------------------------------------
-    // User Management Methods
-    // -----------------------------------------------------------------------------------------------------------------
-
-    public PaginatedDataDto<UserProfileDto> search(String query, UserRole role, int limit, int offset, boolean isAdmin) {
         return userRepository.search(query, role, limit, offset, isAdmin);
     }
 
     /**
      * Approves a user by changing their role to APPROVED and creating normal and savings accounts for them.
      *
+     * @param execUser     the authenticated user performing the request
      * @param targetUserId the ID of the user to approve
      * @return UserProfileDto containing the updated user information
      * @ Transactional ensures that the operation is atomic, meaning either all changes are applied or none.
@@ -107,39 +139,6 @@ class UserServiceImpl implements UserService {
         // Assign created accounts to the user
         targetUser.getAccounts().add(savedNormalAccount);
         targetUser.getAccounts().add(savedSavingsAccount);
-    }
-
-    // TODO: Change to UserProfileDto (Otherwise password is returned, which we don't want or need)
-    /**
-     * Retrieves a user profile by its unique ID.
-     * <p>
-     * Allows fetching the details of a specific user by their ID.
-     * It requires the authenticated user's credentials to ensure proper access control.
-     * Also requires execUser to be an employee or the user themselves to retrieve their own profile.
-     * </p>
-     *
-     * @param execUser     the authenticated user performing the request
-     * @param targetUserId the unique identifier of the target user to retrieve
-     * @return User object containing the requested user's profile information
-     */
-    public User getUserById(User execUser, Long targetUserId) {
-        if (execUser == null)
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
-
-        if (!execUser.getUserId().equals(targetUserId) && !execUser.isEmployee())
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to view this user's profile");
-
-        User targetUser = userRepository.findByUserId(targetUserId);
-        if (targetUser == null)
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found with id: " + targetUserId);
-
-        // Check if execUser is trying to view their own profile, then allow it
-        // Restrict employees from viewing other employee profiles unless they are admins
-        if (!execUser.getUserId().equals(targetUser.getUserId()))
-            if (targetUser.getRole() == UserRole.EMPLOYEE || targetUser.getRole() == UserRole.ADMIN)
-                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to view employee/admin profiles");
-
-        return targetUser;
     }
 
     /**
@@ -238,10 +237,27 @@ class UserServiceImpl implements UserService {
             }
 
             // Save the updated accounts
-            accountRepository.saveAll(accountsToUpdate);
+            accountService.saveAll(accountsToUpdate);
         }
 
         // Now delete the user
         userRepository.delete(targetUser);
+    }
+
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // Non-API Methods (Less authentication required, since they are used internally)
+    // -----------------------------------------------------------------------------------------------------------------
+
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    public void save(User user) {
+        userRepository.save(user);
+    }
+
+    public void saveAll(List<User> users) {
+        userRepository.saveAll(users);
     }
 }
