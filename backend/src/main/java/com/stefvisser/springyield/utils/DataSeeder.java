@@ -2,9 +2,10 @@ package com.stefvisser.springyield.utils;
 
 import com.github.javafaker.Faker;
 import com.stefvisser.springyield.models.*;
-import com.stefvisser.springyield.repositories.AccountRepository;
-import com.stefvisser.springyield.repositories.TransactionRepository;
-import com.stefvisser.springyield.repositories.UserRepository;
+import com.stefvisser.springyield.services.AccountService;
+import com.stefvisser.springyield.services.TransactionService;
+import com.stefvisser.springyield.services.UserService;
+import com.stefvisser.springyield.dto.TransactionDto;
 import jakarta.annotation.PostConstruct;
 import org.iban4j.CountryCode;
 import org.iban4j.Iban;
@@ -18,18 +19,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+@Service
+@Primary
 public class DataSeeder {
-    private final UserRepository userRepository;
-    private final AccountRepository accountRepository;
-    private final TransactionRepository transactionRepository;
+    private final UserService userService;
+    private final AccountService accountService;
+    private final TransactionService transactionService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final Faker faker;
     private final List<Transaction> generatedTransactions = new ArrayList<>();
 
-    public DataSeeder(UserRepository userRepository, AccountRepository accountRepository, TransactionRepository transactionRepository) {
-        this.userRepository = userRepository;
-        this.accountRepository = accountRepository;
-        this.transactionRepository = transactionRepository;
+    public DataSeeder(UserService userService, AccountService accountService, TransactionService transactionService) {
+        this.userService = userService;
+        this.accountService = accountService;
+        this.transactionService = transactionService;
 
         this.faker = new Faker(new Locale("nl", "NL"));
         this.bCryptPasswordEncoder = new BCryptPasswordEncoder();
@@ -77,16 +80,16 @@ public class DataSeeder {
             users.add(user);
         }
         createAtmsUser(); // Create a user for ATMS system
-        userRepository.saveAll(users); // Save default role users first
+        userService.saveAll(users); // Save default role users first
     }
 
     // @Transactional // Consider if this method also needs to be transactional if it involves lazy loading or multiple DB operations
     private void addRandomUsers(int count) {
         List<User> fakeUsers = this.generateFakeUsers(count);
-        userRepository.saveAll(fakeUsers);
+        userService.saveAll(fakeUsers);
         List<Transaction> transactions = generatedTransactions;
         if (transactions != null && !transactions.isEmpty()) {
-            transactionRepository.saveAll(transactions);
+            transactionService.saveAll(transactions);
         }
     }
 
@@ -223,7 +226,6 @@ public class DataSeeder {
                 new BigDecimal("-1000000.00"), AccountStatus.ACTIVE, new ArrayList<>());
 
         atmsUser.getAccounts().add(atmsAccount);
-        userRepository.save(atmsUser); // Save user, which cascades to account
+        userService.save(atmsUser); // Save user, which cascades to account
     }
 }
-

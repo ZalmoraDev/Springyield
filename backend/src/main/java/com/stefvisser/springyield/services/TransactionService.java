@@ -15,6 +15,8 @@ public interface TransactionService {
     List<Transaction> getTransactionsByReference(String reference);
     List<Transaction> getTransactionsByIBAN(String iban);
 
+    void saveAll(List<Transaction> transactions);
+
     Transaction createTransaction(TransactionDto transaction) throws ResponseStatusException;
     PaginatedDataDto<TransactionDto> searchTransactions(
             String query,

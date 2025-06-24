@@ -45,6 +45,16 @@ class UserServiceImpl implements UserService {
         return userRepository.findAll();
     }
 
+    @Override
+    public void saveAll(List<User> users) {
+        userRepository.saveAll(users);
+    }
+
+    @Override
+    public void save(User user) {
+        userRepository.save(user);
+    }
+
     // -----------------------------------------------------------------------------------------------------------------
     // User Management Methods
     // -----------------------------------------------------------------------------------------------------------------

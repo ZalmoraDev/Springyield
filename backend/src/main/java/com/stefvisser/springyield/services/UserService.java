@@ -14,6 +14,9 @@ import java.util.List;
 public interface UserService {
     List<User> getAllUsers();
 
+    // Added methods for DataSeeder
+    void saveAll(List<User> users);
+    void save(User user);
 
     PaginatedDataDto<UserProfileDto> search(String query, UserRole role, int limit, int offset, boolean isAdmin);
 

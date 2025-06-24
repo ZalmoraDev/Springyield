@@ -384,5 +384,9 @@ public class TransactionServiceImpl implements TransactionService {
         accountService.updateAccount(account);
         return transactionRepository.save(transaction);
     }
-}
 
+    @Override
+    public void saveAll(List<Transaction> transactions) {
+        transactionRepository.saveAll(transactions);
+    }
+}
