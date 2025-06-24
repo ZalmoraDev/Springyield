@@ -11,12 +11,16 @@ import com.stefvisser.springyield.models.User;
 import com.stefvisser.springyield.repositories.AccountRepository;
 import org.iban4j.CountryCode;
 import org.iban4j.Iban;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class AccountServiceImpl implements AccountService {
@@ -27,36 +31,50 @@ public class AccountServiceImpl implements AccountService {
         this.accountRepository = accountRepository;
     }
 
-    public List<Account> getAllAccounts() {
-        return accountRepository.findAll();
+    // -----------------------------------------------------------------------------------------------------------------
+    // API Methods
+    // -----------------------------------------------------------------------------------------------------------------
+
+    @Override
+    public PaginatedDataDto<AccountProfileDto> search(String query) {
+        query = query.toLowerCase();
+        query = query.trim();
+        return accountRepository.searchAccount(query, AccountType.PAYMENT, null, 50, 0);
     }
 
-    public List<Account> getAccountsByUserId(Long userId) {
-        return accountRepository.findByUserUserId(userId);
-    }
+    public Account getAccountByIban(User execUser, String iban) {
+        if (execUser == null)
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
 
-    public Account getAccountByIban(String iban) {
-        return accountRepository.findByIban(iban);
+        Account account = accountRepository.findByIban(iban);
+        if (account == null)
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found with IBAN: " + iban);
+
+        if (!Objects.equals(account.getUser().getUserId(), execUser.getUserId()) && !execUser.isEmployee())
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to view this account");
+
+        return account;
     }
 
     public void updateAccount(Account account) {
         accountRepository.save(account);
     }
 
-    /**
-     * Creates a new account with standard defaults applied.
-     * This simplified method only requires the essential parameters,
-     * and applies default values for id (null), iban (NL SPYD format),
-     * creation date (current date), transaction list (empty), and status (ACTIVE).
-     *
-     * @param user           the user who owns the account
-     * @param accountType    the type of account (PAYMENT, SAVINGS, etc.)
-     * @param dailyLimit     the daily transaction limit
-     * @param absoluteLimit  the absolute transaction limit
-     * @param initialBalance the starting balance
-     * @param balanceLimit   the lower limit for the account balance
-     * @return the saved account
-     */
+    @Transactional
+    public Account updateBalanceLimits(Long accountId, BigDecimal dailyLimit, BigDecimal absoluteLimit) {
+        Account account = accountRepository.findByAccountId(accountId)
+                .orElseThrow(() -> new RuntimeException("Account not found"));
+
+        account.setDailyLimit(dailyLimit);
+        account.setAbsoluteLimit(absoluteLimit);
+
+        return accountRepository.save(account);
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // Non-API Methods (Less authentication required, since they are used internally)
+    // -----------------------------------------------------------------------------------------------------------------
+
     public Account createAccount(User user, AccountType accountType, BigDecimal dailyLimit,
                                  BigDecimal absoluteLimit, BigDecimal initialBalance, BigDecimal balanceLimit) {
         // Generate NL SPYD format IBAN
@@ -84,24 +102,6 @@ public class AccountServiceImpl implements AccountService {
         return accountRepository.save(account);
     }
 
-    @Transactional
-    public Account updateBalanceLimits(Long accountId, BigDecimal dailyLimit, BigDecimal absoluteLimit) {
-        Account account = accountRepository.findByAccountId(accountId)
-                .orElseThrow(() -> new RuntimeException("Account not found"));
-
-        account.setDailyLimit(dailyLimit);
-        account.setAbsoluteLimit(absoluteLimit);
-
-        return accountRepository.save(account);
-    }
-
-    @Override
-    public PaginatedDataDto<AccountProfileDto> search(String query) {
-        query = query.toLowerCase();
-        query = query.trim();
-        return accountRepository.searchAccount(query, AccountType.PAYMENT, null, 50, 0);
-    }
-
     @Override
     public PaginatedDataDto<AccountProfileDto> searchAccount(String query, AccountType accountType, AccountStatus status, int limit, int offset) {
         return accountRepository.searchAccount(query, accountType, status, limit, offset);
@@ -111,7 +111,6 @@ public class AccountServiceImpl implements AccountService {
     public boolean validateTransaction(Account account, Transaction transaction) {
         return false;
     }
-
 
 
     @Override

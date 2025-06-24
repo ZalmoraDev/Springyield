@@ -2,6 +2,7 @@ package com.stefvisser.springyield.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.stefvisser.springyield.dto.AccountProfileDto;
 import jakarta.persistence.*;
 import lombok.*;
 

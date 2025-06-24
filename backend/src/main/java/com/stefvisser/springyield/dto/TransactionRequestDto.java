@@ -1,5 +1,6 @@
 package com.stefvisser.springyield.dto;
 
+import com.stefvisser.springyield.models.TransactionType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,17 +10,19 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
- * Data Transfer Object for transaction data.
+ * Data Transfer Object for transaction data
  * <p>
  * This class represents transaction data transferred between the service layer and client.
  * It contains all the essential information about a transaction in the banking system,
  * such as the source and destination accounts, transfer amount, and transaction metadata.
  * </p>
+ *
+ * @since 1.0
  */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class TransactionDto {
+public class TransactionRequestDto {
     /**
      * The unique identifier for the transaction.
      */
@@ -28,12 +31,12 @@ public class TransactionDto {
     /**
      * The account number from which the funds are transferred.
      */
-    private String fromAccount;
+    private String fromAccString;
 
     /**
      * The account number to which the funds are transferred.
      */
-    private String toAccount;
+    private String toAccString;
 
     /**
      * The amount of money transferred in the transaction.
@@ -58,7 +61,7 @@ public class TransactionDto {
     /**
      * The type of transaction (e.g., deposit, withdrawal, transfer).
      */
-    private Transaction.TransactionType transactionType;
+    private TransactionType transactionType;
 
     /**
      * Converts a Transaction model object to a TransactionDTO.
@@ -70,8 +73,8 @@ public class TransactionDto {
      * @param transaction The Transaction entity to be wrapped
      * @return A new TransactionDTO containing data from the provided transaction
      */
-    public static TransactionDto wrap(Transaction transaction) {
-        return new TransactionDto(
+    public static TransactionRequestDto wrap(Transaction transaction) {
+        return new TransactionRequestDto(
                 transaction.getTransactionId(),
                 transaction.getFromAccount(),
                 transaction.getToAccount(),
@@ -83,8 +86,8 @@ public class TransactionDto {
         );
     }
 
-    public static TransactionDto fromTransaction(Transaction transaction) {
-        return new TransactionDto(
+    public static TransactionRequestDto fromTransaction(Transaction transaction) {
+        return new TransactionRequestDto(
                 transaction.getTransactionId(),
                 transaction.getFromAccount(),
                 transaction.getToAccount(),

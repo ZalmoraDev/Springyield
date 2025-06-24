@@ -12,7 +12,7 @@ import java.util.List;
 
 /// Because @Service is used in the implementation
 public interface UserService {
-    // API methods
+    // API Methods
     User getUserById(User execUser, Long targetUserId);
     PaginatedDataDto<UserProfileDto> search(User execUser, String query, UserRole role, int limit, int offset);
 
@@ -21,7 +21,7 @@ public interface UserService {
     void deleteUser(User execUser, Long targetUserId);
 
 
-    // Non-API methods
+    // Non-API Methods (Less authentication required, since they are used internally)
     User findByEmail(String mail);
     void saveAll(List<User> users);
     void save(User user);

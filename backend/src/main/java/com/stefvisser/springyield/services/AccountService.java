@@ -8,9 +8,10 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public interface AccountService {
-    List<Account> getAccountsByUserId(Long userId);
-    List<Account> getAllAccounts();
-    Account getAccountByIban(String iban);
+
+    // API Methods
+    Account getAccountByIban(User execUser, String iban);
+//    Account getAccountProfileDtoByIban(User execUser, String iban);
     void updateAccount(Account account);
     Account createAccount(User user, AccountType accountType, BigDecimal dailyLimit,
                           BigDecimal absoluteLimit, BigDecimal initialBalance, BigDecimal balanceLimit);
@@ -20,7 +21,7 @@ public interface AccountService {
     Account updateBalanceLimits(Long accountId, BigDecimal dailyLimit, BigDecimal absoluteLimit);
 
 
-    // Added methods for DataSeeder
-    void saveAll(List<Account> accounts);
+    // Non-API Methods (Less authentication required, since they are used internally)
     void save(Account account);
+    void saveAll(List<Account> accounts);
 }

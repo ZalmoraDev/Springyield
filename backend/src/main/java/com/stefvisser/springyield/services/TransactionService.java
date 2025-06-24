@@ -1,8 +1,9 @@
 package com.stefvisser.springyield.services;
 
-import com.stefvisser.springyield.dto.TransactionDto;
+import com.stefvisser.springyield.dto.TransactionRequestDto;
 import com.stefvisser.springyield.dto.PaginatedDataDto;
 import com.stefvisser.springyield.models.Transaction;
+import com.stefvisser.springyield.models.User;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
@@ -10,15 +11,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface TransactionService {
-    List<Transaction> getAllTransactions();
-    Transaction getTransactionById(long id);
-    List<Transaction> getTransactionsByReference(String reference);
-    List<Transaction> getTransactionsByIBAN(String iban);
 
-    void saveAll(List<Transaction> transactions);
-
-    Transaction createTransaction(TransactionDto transaction) throws ResponseStatusException;
-    PaginatedDataDto<TransactionDto> searchTransactions(
+    // API Methods
+    PaginatedDataDto<TransactionRequestDto> searchTransactions(
+            User execUser,
             String query,
             String type,
             int limit,
@@ -29,6 +25,14 @@ public interface TransactionService {
             BigDecimal amountTo,
             String amountOperator
     );
+    Transaction getTransactionById(User execUser, long id);
+    List<Transaction> getTransactionsByIBAN(User execUser, String iban);
+    List<Transaction> getTransactionsByReference(User execUser, String reference);
+    List<Transaction> getAllTransactions(User execUser);
+    Transaction createTransaction(User execUser, TransactionRequestDto transaction) throws ResponseStatusException;
+    Transaction processAtmTransaction(User execUser, TransactionRequestDto transactionReqDTO);
 
-    Transaction processAtmTransaction(TransactionDto transactionDTO);
+
+    // Non-API Methods (Less authentication required, since they are used internally)
+    void saveAll(List<Transaction> transactions);
 }

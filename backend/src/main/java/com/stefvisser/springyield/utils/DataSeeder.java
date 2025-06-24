@@ -186,10 +186,10 @@ public class DataSeeder {
         depositTransaction.setDescription("Initial deposit");
 
         if (faker.number().numberBetween(0, 100) < 90) {
-            depositTransaction.setTransactionType(Transaction.TransactionType.DEPOSIT);
+            depositTransaction.setTransactionType(TransactionType.DEPOSIT);
         } else {
             // This case seems unlikely for an initial deposit, but keeping original logic
-            depositTransaction.setTransactionType(Transaction.TransactionType.TRANSFER);
+            depositTransaction.setTransactionType(TransactionType.TRANSFER);
         }
         return depositTransaction;
     }
@@ -203,7 +203,7 @@ public class DataSeeder {
             transaction.setTransferAmount(BigDecimal.valueOf(faker.number().randomDouble(2, 1, 100)));
             transaction.setTimestamp(LocalDateTime.now().minusDays(faker.number().numberBetween(0, 30)));
             transaction.setReference("TR" + faker.number().numberBetween(100000, 999999));
-            transaction.setTransactionType(Transaction.TransactionType.TRANSFER);
+            transaction.setTransactionType(TransactionType.TRANSFER);
             transaction.setDescription("Random transfer");
 
             generatedTransactions.add(transaction);

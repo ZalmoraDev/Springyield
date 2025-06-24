@@ -14,12 +14,6 @@ import java.util.stream.Stream;
 
 @Repository
 public interface AccountRepository extends JpaRepository<Account, Long> {
-    /// Return status on whether a generated IBAN number exists in the database
-    /// when creating an account. Service loops until unique IBAN is generated.
-    boolean existsByIban(String iban);
-
-    List<Account> findByUserUserId(Long userId);
-
     List<Account> findAll();
     Optional<Account> findByAccountId(Long accountId);
     Account findByIban(String iban);
@@ -65,6 +59,7 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
                             .contains(queryLower)
             );
         }
+
         List<Account> filteredAccounts = accountStream.toList();
         int totalCount = filteredAccounts.size();
 

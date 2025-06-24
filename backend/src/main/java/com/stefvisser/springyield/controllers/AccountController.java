@@ -35,29 +35,24 @@ public class AccountController {
         this.accountService = accountService;
     }
 
-
+    /**
+     * Retrieves the account profile for the currently authenticated user.
+     * <p>
+     * This endpoint returns the account details of the user making the request.
+     * </p>
+     *
+     * @param execUser the currently authenticated user
+     * @return ResponseEntity containing the account profile or an error message
+     */
     @GetMapping("/iban/{iban}")
     public ResponseEntity<?> getAccountByIban(@AuthenticationPrincipal User execUser, @PathVariable String iban) {
         try {
-            if (execUser == null)
-                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
-
-            Account account = accountService.getAccountByIban(iban);
-
-            if (account == null) {
-                return ResponseEntity.notFound().build();
-            }
-
-            if (!Objects.equals(account.getUser().getUserId(), execUser.getUserId()) && !execUser.isEmployee()) {
-                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to view this account");
-            }
-
-            return ResponseEntity.ok(new AccountProfileDto(account));
+            Account account = accountService.getAccountByIban(execUser, iban);
+            return ResponseEntity.ok().body(account);
         } catch (ResponseStatusException e) {
-            return ResponseEntity.status(e.getStatusCode()).body(e.getBody());
+            return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
         }
     }
-
 
     /**
      * Searches for accounts based on specified criteria with pagination.
@@ -66,8 +61,10 @@ public class AccountController {
      * with results returned in a paginated format for efficient data transfer.
      * </p>
      *
+     * @param execUser    the currently authenticated user
      * @param query       optional search string to filter accounts by various attributes
      * @param accountType optional account type filter (e.g., CURRENT, SAVINGS)
+     * @param status      optional account status filter (e.g., ACTIVE, CLOSED)
      * @param limit       maximum number of results per page (defaults to 10)
      * @param offset      starting position for pagination (defaults to 0)
      * @return ResponseEntity containing paginated account search results
@@ -92,6 +89,15 @@ public class AccountController {
         }
     }
 
+    /**
+     * Retrieves the account profile for the currently authenticated user.
+     * <p>
+     * This endpoint returns the account details of the user making the request.
+     * </p>
+     *
+     * @param execUser the currently authenticated user
+     * @return ResponseEntity containing the account profile or an error message
+     */
     @PutMapping("/{accountId}/limits")
     public ResponseEntity<?> updateBalanceLimits(
             @AuthenticationPrincipal User execUser,
@@ -101,9 +107,8 @@ public class AccountController {
             if (execUser == null)
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
 
-            if (!execUser.isEmployee()) {
+            if (!execUser.isEmployee())
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to update account limits");
-            }
 
             Account updatedAccount = accountService.updateBalanceLimits(
                     accountId,

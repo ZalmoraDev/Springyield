@@ -2,7 +2,7 @@ package com.stefvisser.springyield.models;
 
 import jakarta.persistence.*;
 import lombok.*;
-import com.stefvisser.springyield.dto.TransactionDto;
+import com.stefvisser.springyield.dto.TransactionRequestDto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -41,15 +41,15 @@ public class Transaction implements Cloneable {
     @Column(name = "transaction_type")
     private TransactionType transactionType;
 
-    public static Transaction fromDTO(TransactionDto transactionDTO) {
+    public static Transaction fromDTO(TransactionRequestDto transactionReqDTO) {
         Transaction transaction = new Transaction();
-        transaction.setFromAccount(transactionDTO.getFromAccount());
-        transaction.setToAccount(transactionDTO.getToAccount());
-        transaction.setTransferAmount(transactionDTO.getTransferAmount());
-        transaction.setDescription(transactionDTO.getDescription());
-        transaction.setReference(transactionDTO.getReference());
-        transaction.setTimestamp(transactionDTO.getTimestamp());
-        transaction.setTransactionType(transactionDTO.getTransactionType());
+        transaction.setFromAccount(transactionReqDTO.getFromAccString());
+        transaction.setToAccount(transactionReqDTO.getToAccString());
+        transaction.setTransferAmount(transactionReqDTO.getTransferAmount());
+        transaction.setDescription(transactionReqDTO.getDescription());
+        transaction.setReference(transactionReqDTO.getReference());
+        transaction.setTimestamp(transactionReqDTO.getTimestamp());
+        transaction.setTransactionType(transactionReqDTO.getTransactionType());
         return transaction;
     }
 
@@ -70,7 +70,4 @@ public class Transaction implements Cloneable {
         }
     }
 
-    public enum TransactionType {
-        TRANSFER, DEPOSIT, WITHDRAW
-    }
 }
