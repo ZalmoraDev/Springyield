@@ -53,14 +53,12 @@ public class AccountController {
      * @return ResponseEntity containing paginated account search results
      */
     @GetMapping("/search")
-    public ResponseEntity<?> getAccountsBySearch(@AuthenticationPrincipal User user, @RequestParam(required = false) String query, @RequestParam(required = false) AccountType accountType, @RequestParam(required = false) AccountStatus status, @RequestParam(required = false) Integer limit, @RequestParam(required = false) int offset) {
+    public ResponseEntity<?> getAccountsBySearch(@AuthenticationPrincipal User execUser, @RequestParam(required = false) String query, @RequestParam(required = false) AccountType accountType, @RequestParam(required = false) AccountStatus status, @RequestParam(required = false) Integer limit, @RequestParam(required = false) int offset) {
         try {
-            if (user == null)
+            if (execUser == null)
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
 
-            User executingUser = userService.getUserById(user.getUserId());
-
-            if (!executingUser.isEmployee())
+            if (!execUser.isEmployee())
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to view accounts");
 
 
@@ -77,16 +75,14 @@ public class AccountController {
 
     @PutMapping("/{accountId}/limits")
     public ResponseEntity<?> updateAccountLimits(
-            @AuthenticationPrincipal User user,
+            @AuthenticationPrincipal User execUser,
             @PathVariable Long accountId,
             @RequestBody AccountLimitsDto limitsDTO) {
         try {
-            if (user == null)
+            if (execUser == null)
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
 
-            User executingUser = userService.getUserById(user.getUserId());
-
-            if (!executingUser.isEmployee()) {
+            if (!execUser.isEmployee()) {
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to update account limits");
             }
 
@@ -119,46 +115,41 @@ public class AccountController {
     }
 
     /**
-     * Retrieves a user's profile along with their associated accounts.
+     * Retrieves a execUser's profile along with their associated accounts.
      * <p>
-     * This endpoint returns combined data about a user and their bank accounts,
+     * This endpoint returns combined data about a execUser and their bank accounts,
      * providing a comprehensive view of a customer's profile and financial accounts.
      * </p>
      *
-     * @param userId the unique identifier of the user
-     * @return ResponseEntity containing a map with the user profile and their accounts
+     * @param targetUserId the unique identifier of the execUser
+     * @return ResponseEntity containing a map with the execUser profile and their accounts
      */
-    @GetMapping("/{userId}")
-    public ResponseEntity<?> getUserAndAccounts(@AuthenticationPrincipal User user, @PathVariable Long userId) {
+    @GetMapping("/{targetUserId}")
+    public ResponseEntity<?> getUserAndAccounts(@AuthenticationPrincipal User execUser, @PathVariable Long targetUserId) {
         try {
-            if (user == null)
+            if (execUser == null)
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
 
-            User executingUser = userService.getUserById(user.getUserId());
+            if (!execUser.isEmployee())
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to view this execUser's profile");
 
-            if (!executingUser.getUserId().equals(user.getUserId()) && !executingUser.isEmployee())
-                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to view this user's profile");
+            User targetUser = userService.getUserById(execUser, targetUserId);
 
-
-            User foundUser = userService.getUserById(userId);
-
-            if (foundUser == null) {
+            if (targetUser == null) {
                 return ResponseEntity.notFound().build();
             }
 
-            return ResponseEntity.ok(new UserProfileDto(foundUser));
+            return ResponseEntity.ok(new UserProfileDto(targetUser));
         } catch (ResponseStatusException e) {
             return ResponseEntity.status(e.getStatusCode()).body(e.getBody());
         }
     }
 
     @GetMapping("/iban/{iban}")
-    public ResponseEntity<?> getAccountByIban(@AuthenticationPrincipal User user, @PathVariable String iban) {
+    public ResponseEntity<?> getAccountByIban(@AuthenticationPrincipal User execUser, @PathVariable String iban) {
         try {
-            if (user == null)
+            if (execUser == null)
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
-
-            User executingUser = userService.getUserById(user.getUserId());
 
             Account account = accountService.getAccountByIban(iban);
 
@@ -166,7 +157,7 @@ public class AccountController {
                 return ResponseEntity.notFound().build();
             }
 
-            if (!Objects.equals(account.getUser().getUserId(), executingUser.getUserId()) && !executingUser.isEmployee()){
+            if (!Objects.equals(account.getUser().getUserId(), execUser.getUserId()) && !execUser.isEmployee()){
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to view this account");
             }
 

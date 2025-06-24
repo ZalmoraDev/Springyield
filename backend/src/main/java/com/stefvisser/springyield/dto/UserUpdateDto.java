@@ -4,6 +4,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import com.stefvisser.springyield.models.UserRole;
 
+/**
+ * Data Transfer Object for updating user information.
+ * <p>
+ * Includes all User fields, except for accounts and userId.
+ * </p>
+ */
 @Data
 @NoArgsConstructor
 public class UserUpdateDto {

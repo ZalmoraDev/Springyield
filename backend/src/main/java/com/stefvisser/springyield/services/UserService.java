@@ -14,19 +14,14 @@ import java.util.List;
 public interface UserService {
     List<User> getAllUsers();
 
-    User getUserById(Long userId);
 
     PaginatedDataDto<UserProfileDto> search(String query, UserRole role, int limit, int offset, boolean isAdmin);
 
-    void addRandomUsers(int count);
-    void addDefaultUsers();
-    UserProfileDto approveUser(Long userId, BigDecimal dailyLimit, BigDecimal absoluteLimit);
+    void approveUser(User execUser, Long userId, BigDecimal dailyLimit, BigDecimal absoluteLimit);
 
+    User getUserById(User execUser, Long targetUserId);
     void deleteUser(User execUser, Long targetUserId);
-
-    UserProfileDto updateUser(Long userId, UserUpdateDto userUpdateDto);
-
-    BCryptPasswordEncoder getPasswordEncoder();
+    UserProfileDto updateUser(User execUser, Long targetUserId, UserUpdateDto userUpdateDto);
 
     User findByEmail(String mail);
 }

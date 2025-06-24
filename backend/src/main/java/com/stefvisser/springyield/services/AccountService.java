@@ -1,9 +1,6 @@
 package com.stefvisser.springyield.services;
 
-import com.stefvisser.springyield.models.Account;
-import com.stefvisser.springyield.models.AccountStatus;
-import com.stefvisser.springyield.models.AccountType;
-import com.stefvisser.springyield.models.Transaction;
+import com.stefvisser.springyield.models.*;
 import com.stefvisser.springyield.dto.AccountProfileDto;
 import com.stefvisser.springyield.dto.PaginatedDataDto;
 
@@ -15,7 +12,8 @@ public interface AccountService {
     List<Account> getAllAccounts();
     Account getAccountByIban(String iban);
     void updateAccount(Account account);
-    Account createAccount(Account account);
+    Account createAccount(User user, AccountType accountType, BigDecimal dailyLimit,
+                          BigDecimal absoluteLimit, BigDecimal initialBalance, BigDecimal balanceLimit);
     boolean validateTransaction(Account account, Transaction transaction);
     PaginatedDataDto<AccountProfileDto> searchAccount(String query, AccountType accountType, AccountStatus status, int limit, int offset);
     Account updateAccountLimits(Long accountId, BigDecimal dailyLimit, BigDecimal absoluteLimit);

@@ -49,30 +49,28 @@ public class UserController {
      * @param role optional role filter (e.g., CUSTOMER, EMPLOYEE)
      * @param limit maximum number of results per page (defaults to 10)
      * @param offset starting position for pagination (defaults to 0)
-     * @return ResponseEntity containing paginated user search results
+     * @return ResponseEntity containing paginated execUser search results
      */
     @GetMapping("/search")
     public ResponseEntity<?> getUserByName(
-            @AuthenticationPrincipal User user,
+            @AuthenticationPrincipal User execUser,
             @RequestParam(required = false) String query,
             @RequestParam(required = false) UserRole role,
             @RequestParam(required = false) Integer limit,
             @RequestParam(required = false) int offset)
     {
         try {
-            if (user == null)
+            if (execUser == null)
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
 
-            User executingUser = userService.getUserById(user.getUserId());
-
-            if (!executingUser.isEmployee())
+            if (!execUser.isEmployee())
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to search users");
 
 
             if (limit == null) limit = 10;
             if (offset < 0) offset = 0;
             if (query == null) query = "";
-            boolean isAdmin = executingUser.getRole() == UserRole.ADMIN;
+            boolean isAdmin = execUser.getRole() == UserRole.ADMIN;
 
 
             PaginatedDataDto<UserProfileDto> paginatedUsers = userService.search(query, role, limit, offset, isAdmin);
@@ -84,115 +82,88 @@ public class UserController {
     }
 
     /**
-     * Approves a user account, enabling full system access.
+     * Approves a execUser account, enabling full system access.
      * <p>
-     * This endpoint changes a user's approval status to approved,
+     * This endpoint changes a execUser's approval status to approved,
      * which typically enables them to perform banking operations.
      * This action is generally restricted to administrative users.
      * </p>
      *
-     * @param userId the unique identifier of the user to approve
-     * @return ResponseEntity containing the updated user profile
+     * @param userId the unique identifier of the execUser to approve
+     * @return ResponseEntity containing the updated execUser profile
      */
     @PutMapping("/{userId}/approve")
-    public ResponseEntity<?> approveUser(@AuthenticationPrincipal User user, @PathVariable Long userId, @RequestBody UserApprovalDto approvalDTO) {
+    public ResponseEntity<?> approveUser(@AuthenticationPrincipal User execUser, @PathVariable Long userId, @RequestBody UserApprovalDto approvalDTO) {
         try {
-            if (user == null)
-                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
-
-            User executingUser = userService.getUserById(user.getUserId());
-
-            if (executingUser == null || !executingUser.isEmployee()) {
-                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to approve users");
-            }
-
-            UserProfileDto result = userService.approveUser(userId, approvalDTO.getDailyLimit(), approvalDTO.getAbsoluteLimit());
-            return ResponseEntity.ok(result);
-
-        } catch (ResponseStatusException e) {
-            return ResponseEntity.status(e.getStatusCode()).body(e.getBody());
-        }
-
-    }
-
-    /**
-     * Updates an existing user's details.
-     * <p>
-     * This endpoint allows updating mutable fields of a user's profile.
-     * It requires the user ID in the path and the updated data in the request body.
-     * </p>
-     *
-     * @param userId the unique identifier of the user to update
-     * @param userUpdateDto DTO containing the fields to update
-     * @return ResponseEntity containing the updated user profile
-     */
-    @PutMapping("/{userId}/update")
-    public ResponseEntity<?> updateUser(@AuthenticationPrincipal User user, @PathVariable Long userId, @RequestBody UserUpdateDto userUpdateDto) {
-        try {
-            User executingUser = userService.getUserById(user.getUserId());
-
-            // Check if user is updating their own profile or is an employee
-            if (executingUser == null || (!executingUser.getUserId().equals(userId) && !executingUser.isEmployee())) {
-                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to update this user");
-            }
-
-            // Validate required fields
-            if (userUpdateDto.getFirstName() == null || userUpdateDto.getLastName() == null ||
-                    userUpdateDto.getEmail() == null || userUpdateDto.getPhoneNumber() == null) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Required fields cannot be empty");
-            }
-
-            // Role change check
-            if (userUpdateDto.getRole() != null && !executingUser.getRole().equals(UserRole.ADMIN)) {
-                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only admins can change user roles");
-            }
-
-            UserProfileDto updatedUser = userService.updateUser(userId, userUpdateDto);
-            return ResponseEntity.ok(updatedUser);
-        } catch (ResponseStatusException e) {
-            return ResponseEntity.status(e.getStatusCode()).body(e.getBody());
-        }
-    }
-
-    //TODO: ????
-    @GetMapping("/{userId}")
-    public ResponseEntity<?> getUserById(@AuthenticationPrincipal User user, @PathVariable Long userId) {
-        try {
-            if (user == null)
-                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
-
-            User executingUser = userService.getUserById(user.getUserId());
-
-            if (!executingUser.getUserId().equals(user.getUserId()) && !executingUser.isEmployee())
-                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to view this user's profile");
-
-
-            User foundUser = userService.getUserById(userId);
-
-            if (foundUser == null) {
-                return ResponseEntity.notFound().build();
-            }
-
-            if (foundUser.isEmployee() && !executingUser.getUserId().equals(foundUser.getUserId())) {
-                if (executingUser.getRole() != UserRole.ADMIN) {
-                    throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to view employee profiles");
-                }
-            }
-
-
-            return ResponseEntity.ok(new UserProfileDto(foundUser));
+            userService.approveUser(execUser, userId, approvalDTO.getDailyLimit(), approvalDTO.getAbsoluteLimit());
+            return ResponseEntity.ok().build();
         } catch (ResponseStatusException e) {
             return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
         }
     }
 
+    /**
+     * Retrieves a user profile by its unique ID.
+     * <p>
+     * Allows fetching the details of a specific user by their ID.
+     * It requires the authenticated user's credentials to ensure proper access control.
+     * Also requires execUser to be an employee or the user themselves to retrieve their own profile.
+     * </p>
+     *
+     * @param execUser the authenticated user performing the request
+     * @param targetUserId the unique identifier of the target user to retrieve
+     * @return ResponseEntity containing the user profile data
+     */
+    @GetMapping("/{targetUserId}")
+    public ResponseEntity<?> getUserById(@AuthenticationPrincipal User execUser, @PathVariable Long targetUserId) {
+        try {
+            User targetUser = userService.getUserById(execUser, targetUserId);
+            return ResponseEntity.ok(new UserProfileDto(targetUser));
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
+        }
+    }
+
+    /**
+     * Updates an existing execUser's details.
+     * <p>
+     * This endpoint allows updating mutable fields of a execUser's profile.
+     * It requires the execUser ID in the path and the updated data in the request body.
+     * </p>
+     *
+     * @param execUser the authenticated user performing the update
+     * @param targetUserId the unique identifier of the target user to update
+     * @param userUpdateDto DTO containing the fields from the frontend to update th db with
+     * @return ResponseEntity containing the updated execUser profile
+     */
+    @PutMapping("/{targetUserId}/update")
+    public ResponseEntity<?> updateUser(@AuthenticationPrincipal User execUser, @PathVariable Long targetUserId, @RequestBody UserUpdateDto userUpdateDto) {
+        try {
+            userService.updateUser(execUser, targetUserId, userUpdateDto);
+            return ResponseEntity.ok().build();
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
+        }
+    }
+
+    /**
+     * Deletes a user account.
+     * <p>
+     * This endpoint allows an authenticated user to delete their own account
+     * or an employee to delete any user account. It prevents employees from
+     * deleting their own accounts.
+     * </p>
+     *
+     * @param execUser the authenticated user performing the deletion
+     * @param targetUserId the unique identifier of the user to delete
+     * @return ResponseEntity indicating the result of the deletion operation
+     */
     @PostMapping("/{targetUserId}/delete")
     public ResponseEntity<?> deleteUser(@AuthenticationPrincipal User execUser, @PathVariable Long targetUserId) {
         try {
             userService.deleteUser(execUser, targetUserId);
             return ResponseEntity.ok().build();
         } catch (ResponseStatusException e) {
-            // Return the reason as the response body for better frontend error handling
             return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
         }
     }

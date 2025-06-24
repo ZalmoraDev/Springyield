@@ -67,23 +67,19 @@ public class TransactionController {
      * Creates a new transaction based on the provided transaction data.
      * <p>
      * This endpoint allows authenticated users to create a transaction between accounts.
-     * It validates the user's access to the specified accounts and ensures that the
+     * It validates the execUser's access to the specified accounts and ensures that the
      * fromAccount and toAccount are not the same.
      * </p>
      *
-     * @param user           the authenticated user initiating the transaction
+     * @param execUser           the authenticated execUser initiating the transaction
      * @param transactionDTO the transaction data to create
      * @return ResponseEntity containing the created transaction as DTO
      */
     @PostMapping("/create")
-    public ResponseEntity<?> createTransaction(@AuthenticationPrincipal User user, @RequestBody() TransactionDto transactionDTO) {
+    public ResponseEntity<?> createTransaction(@AuthenticationPrincipal User execUser, @RequestBody() TransactionDto transactionDTO) {
         try {
-            if (user == null)
+            if (execUser == null)
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
-
-            // 4 uur werk om deze enkele regel toe te moeten voegen.
-            // User user werkt niet want een authenticatedPrincipal User is niet een user entity...
-            User accountOwner = userService.getUserById(user.getUserId());
 
             if (transactionDTO.getFromAccount() == null || transactionDTO.getToAccount() == null)
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Both from account and to account must be provided");
@@ -94,7 +90,7 @@ public class TransactionController {
             if (fromAccount.equalsIgnoreCase(toAccount))
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "From and To accounts cannot be the same");
 
-            if (!accountOwner.hasAccount(fromAccount) && !accountOwner.isEmployee())
+            if (!execUser.hasAccount(fromAccount) && !execUser.isEmployee())
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User does not have access to the specified accounts");
 
             Transaction transaction = transactionService.createTransaction(transactionDTO);
@@ -126,7 +122,7 @@ public class TransactionController {
      */
     @GetMapping("/search")
     public ResponseEntity<?> searchTransactions(
-            @AuthenticationPrincipal User user,
+            @AuthenticationPrincipal User execUser,
             @RequestParam(required = false) String query,
             @RequestParam(required = false) String type,
             @RequestParam(defaultValue = "10") int limit,
@@ -138,14 +134,11 @@ public class TransactionController {
             @RequestParam(required = false) String amountOperator
     ) {
         try {
-            if (user == null)
+            if (execUser == null)
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
 
-            User executingUser = userService.getUserById(user.getUserId());
-            if (!executingUser.isEmployee()) {
+            if (!execUser.isEmployee())
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to search transactions");
-            }
-
 
             if (limit <= 0) limit = 10;
             if (offset < 0) offset = 0;
@@ -217,16 +210,14 @@ public class TransactionController {
      * @return ResponseEntity containing a list of transactions with the specified reference
      */
     @GetMapping("/reference/{reference}")
-    public ResponseEntity<?> getTransactionsByReference(@AuthenticationPrincipal User user, @PathVariable String reference) {
+    public ResponseEntity<?> getTransactionsByReference(@AuthenticationPrincipal User execUser, @PathVariable String reference) {
         try {
-            if (user == null)
+            if (execUser == null)
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
 
-            User executingUser = userService.getUserById(user.getUserId());
-
-            if (!executingUser.isEmployee()) {
+            if (!execUser.isEmployee())
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to search transactions by reference");
-            }
+
             return ResponseEntity.ok(transactionService.getTransactionsByReference(reference)
                     .stream()
                     .map(TransactionDto::wrap)
@@ -247,16 +238,13 @@ public class TransactionController {
      * @return ResponseEntity containing the transaction if found, or a not found status
      */
     @GetMapping("/id/{transactionID}")
-    public ResponseEntity<?> getTransactionByID(@AuthenticationPrincipal User user, @PathVariable Long transactionID) {
+    public ResponseEntity<?> getTransactionByID(@AuthenticationPrincipal User execUser, @PathVariable Long transactionID) {
         try {
-            if (user == null)
+            if (execUser == null)
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
 
-            User executingUser = userService.getUserById(user.getUserId());
-
-            if (!executingUser.isEmployee()) {
+            if (!execUser.isEmployee())
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to view this transaction");
-            }
 
             Transaction transaction = transactionService.getTransactionById(transactionID);
             if (transaction == null) {

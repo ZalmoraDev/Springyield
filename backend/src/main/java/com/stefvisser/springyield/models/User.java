@@ -31,7 +31,6 @@ public class User implements UserDetails {
         this.accounts = accounts;
     }
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;

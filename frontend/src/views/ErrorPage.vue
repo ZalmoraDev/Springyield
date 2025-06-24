@@ -8,8 +8,8 @@ const route = useRoute();
 // Default error state
 const errorState = ref({
   code: '403',
-  title: 'Toegang geweigerd',
-  message: 'Je hebt niet de juiste rechten om deze pagina te bekijken.'
+  title: 'Forbidden',
+  message: 'You don\'t have permission to access this resource.'
 });
 
 // Set error based on route params
@@ -30,15 +30,15 @@ onMounted(() => {
     case '404':
       errorState.value = {
         code: '404',
-        title: 'Pagina niet gevonden',
-        message: 'De pagina die je zoekt bestaat niet of is verplaatst.'
+        title: 'Page Not Found',
+        message: 'Page not found. The page you are looking for does not exist.'
       };
       break;
     case '401':
       errorState.value = {
         code: '401',
-        title: 'Niet geautoriseerd',
-        message: 'Je moet ingelogd zijn om deze pagina te bekijken.'
+        title: 'Unauthorized',
+        message: 'You don\'t have permission to access this resource.'
       };
       break;
     case '403':
