@@ -1,6 +1,6 @@
 <script setup>
-import { useRouter, useRoute } from 'vue-router';
-import { ref, onMounted } from 'vue';
+import {useRouter, useRoute} from 'vue-router';
+import {ref, onMounted} from 'vue';
 
 const router = useRouter();
 const route = useRoute();
@@ -70,19 +70,19 @@ const goHome = () => {
       </div>
 
       <div class="space-y-4">
-        <p>Neem contact op met de beheerder als je denkt dat dit een fout is.</p>
+        <p> Please contact your system administrator if you believe this is an error.</p>
         <div class="flex justify-center space-x-4">
           <button
               @click="goBack"
               class="px-4 py-2 bg-gray-200 text-gray-700 rounded-xl hover:bg-gray-300 transition"
           >
-            Terug
+            Back
           </button>
           <button
               @click="goHome"
               class="px-4 py-2 bg-sy-600 text-white rounded-xl hover:bg-sy-700 transition"
           >
-            Naar Dashboard
+            To Dashboard
           </button>
         </div>
       </div>

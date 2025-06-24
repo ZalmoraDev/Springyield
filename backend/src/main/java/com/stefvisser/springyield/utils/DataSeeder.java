@@ -5,7 +5,6 @@ import com.stefvisser.springyield.models.*;
 import com.stefvisser.springyield.services.AccountService;
 import com.stefvisser.springyield.services.TransactionService;
 import com.stefvisser.springyield.services.UserService;
-import com.stefvisser.springyield.dto.TransactionDto;
 import jakarta.annotation.PostConstruct;
 import org.iban4j.CountryCode;
 import org.iban4j.Iban;
@@ -23,15 +22,13 @@ import java.util.Locale;
 @Primary
 public class DataSeeder {
     private final UserService userService;
-    private final AccountService accountService;
     private final TransactionService transactionService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final Faker faker;
     private final List<Transaction> generatedTransactions = new ArrayList<>();
 
-    public DataSeeder(UserService userService, AccountService accountService, TransactionService transactionService) {
+    public DataSeeder(UserService userService, TransactionService transactionService) {
         this.userService = userService;
-        this.accountService = accountService;
         this.transactionService = transactionService;
 
         this.faker = new Faker(new Locale("nl", "NL"));
@@ -50,8 +47,9 @@ public class DataSeeder {
      * So this method will be executed automatically
      */
     public void initializeDefaultSeederData() {
-        this.addDefaultUsers();
-        this.addRandomUsers(250);
+        addDefaultUsers();
+        createAtmsUser();
+        addRandomUsers(250);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -61,6 +59,9 @@ public class DataSeeder {
     // @Transactional // This is now covered by initializeDefaultUsers
     public void addDefaultUsers() {
         List<User> users = new ArrayList<>();
+        List<Account> accounts = new ArrayList<>();
+        List<String> generatedIbans = new ArrayList<>();
+
         for (UserRole role : UserRole.values()) {
             User user = new User(
                     role.name().toLowerCase(),
@@ -73,14 +74,29 @@ public class DataSeeder {
                     new ArrayList<>()
             );
             for (int i = 0; i < 3; i++) {
-                Account account = this.createAccount(this.getRandomIban());
+                String iban = this.getRandomIban();
+                generatedIbans.add(iban);
+                Account account = this.createAccount(iban);
                 account.setUser(user);
                 user.getAccounts().add(account);
+                accounts.add(account);
+
+                // Create initial deposit transaction for each account
+                Transaction depositTransaction = createInitialDepositTransaction(iban, account.getBalance());
+                generatedTransactions.add(depositTransaction);
             }
             users.add(user);
         }
-        createAtmsUser(); // Create a user for ATMS system
+
+        // Generate transactions between default user accounts
+        generateTransactions(generatedIbans);
+
         userService.saveAll(users); // Save default role users first
+
+        // Save all generated transactions
+        if (!generatedTransactions.isEmpty()) {
+            transactionService.saveAll(generatedTransactions);
+        }
     }
 
     // @Transactional // Consider if this method also needs to be transactional if it involves lazy loading or multiple DB operations

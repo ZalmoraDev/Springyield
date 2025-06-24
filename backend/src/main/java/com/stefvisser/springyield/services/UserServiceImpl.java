@@ -126,7 +126,7 @@ class UserServiceImpl implements UserService {
         if (execUser == null)
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
 
-        if (!execUser.isEmployee())
+        if (!execUser.getUserId().equals(targetUserId) && !execUser.isEmployee())
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to view this user's profile");
 
         User targetUser = userRepository.findByUserId(targetUserId);

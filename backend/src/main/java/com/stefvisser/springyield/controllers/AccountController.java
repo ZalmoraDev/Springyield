@@ -130,8 +130,8 @@ public class AccountController {
             if (execUser == null)
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
 
-            if (!execUser.isEmployee())
-                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to view this execUser's profile");
+            if (!execUser.getUserId().equals(targetUserId) && !execUser.isEmployee())
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to view this user's profile");
 
             User targetUser = userService.getUserById(execUser, targetUserId);
 
