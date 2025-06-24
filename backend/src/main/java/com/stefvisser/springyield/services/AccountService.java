@@ -15,9 +15,9 @@ public interface AccountService {
     Account createAccount(User user, AccountType accountType, BigDecimal dailyLimit,
                           BigDecimal absoluteLimit, BigDecimal initialBalance, BigDecimal balanceLimit);
     boolean validateTransaction(Account account, Transaction transaction);
+    PaginatedDataDto<AccountProfileDto> search(String query);
     PaginatedDataDto<AccountProfileDto> searchAccount(String query, AccountType accountType, AccountStatus status, int limit, int offset);
-    Account updateAccountLimits(Long accountId, BigDecimal dailyLimit, BigDecimal absoluteLimit);
-    PaginatedDataDto<AccountProfileDto> searchAccountByName(String query);
+    Account updateBalanceLimits(Long accountId, BigDecimal dailyLimit, BigDecimal absoluteLimit);
 
 
     // Added methods for DataSeeder

@@ -85,7 +85,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Transactional
-    public Account updateAccountLimits(Long accountId, BigDecimal dailyLimit, BigDecimal absoluteLimit) {
+    public Account updateBalanceLimits(Long accountId, BigDecimal dailyLimit, BigDecimal absoluteLimit) {
         Account account = accountRepository.findByAccountId(accountId)
                 .orElseThrow(() -> new RuntimeException("Account not found"));
 
@@ -96,7 +96,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public PaginatedDataDto<AccountProfileDto> searchAccountByName(String query) {
+    public PaginatedDataDto<AccountProfileDto> search(String query) {
         query = query.toLowerCase();
         query = query.trim();
         return accountRepository.searchAccount(query, AccountType.PAYMENT, null, 50, 0);

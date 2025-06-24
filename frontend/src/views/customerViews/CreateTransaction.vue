@@ -144,7 +144,7 @@ const fetchUserAndAccounts = async () => {
   errorMessage.value = '';
 
   try {
-    const response = await apiFetch(`/account/${currentUser.value.userId}`);
+    const response = await apiFetch(`/user/${currentUser.value.userId}`);
     if (response.ok) {
       const data = await response.json();
       userAccounts.value = data.accounts;

@@ -223,7 +223,7 @@ const searchAddressBook = async () => {
     const searchTerms = searchTerm.value.trim().split(' ').filter(term => term.length > 0);
 
     // Construct URL with query parameters
-    let url = '/account/addressbook/search?';
+    let url = '/account/addressbook?';
     if (searchTerms) {
       url += `query=${encodeURIComponent(searchTerms)}`;
     }

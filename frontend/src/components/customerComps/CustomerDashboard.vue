@@ -42,7 +42,7 @@ async function fetchAccounts() {
   isLoadingAccounts.value = true;
 
   try {
-    const response = await apiFetch(`/account/${props.user.userId}`);
+    const response = await apiFetch(`/user/${props.user.userId}`);
     if (response.ok) {
       const data = await response.json();
       // The API returns an object with an 'accounts' array
