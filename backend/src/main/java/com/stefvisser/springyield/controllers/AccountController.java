@@ -32,8 +32,8 @@ public class AccountController {
     @GetMapping("/search")
     public ResponseEntity<?> search(@AuthenticationPrincipal User execUser, @RequestParam(required = false) String query, @RequestParam(required = false) AccountType accountType, @RequestParam(required = false) AccountStatus status, @RequestParam(required = false) Integer limit, @RequestParam(required = false) int offset) {
         try {
-            PaginatedDataDto<AccountProfileDto> accounts = accountService.search(execUser, query, accountType, status, limit, offset);
-            return ResponseEntity.ok(accounts);
+            PaginatedDataDto<AccountProfileDto> paginatedAccounts = accountService.search(execUser, query, accountType, status, limit, offset);
+            return ResponseEntity.ok(paginatedAccounts);
         } catch (ResponseStatusException e) {
             return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
         }
@@ -50,7 +50,7 @@ public class AccountController {
     public ResponseEntity<?> getAccountByIban(@AuthenticationPrincipal User execUser, @PathVariable String iban) {
         try {
             Account account = accountService.getAccountByIban(execUser, iban);
-            return ResponseEntity.ok().body(account);
+            return ResponseEntity.ok(account);
         } catch (ResponseStatusException e) {
             return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
         }

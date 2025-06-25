@@ -3,7 +3,8 @@ info:
   title: Springyield API
   version: v0.1
 servers:
-  - url: http://springyield-springboot:8080
+  - url: http://localhost:8080
+#  - url: http://springyield-springboot:8080
   - url: https://api.springyield.stefvisser.com
 paths:
   /api/user/{userId}/update:

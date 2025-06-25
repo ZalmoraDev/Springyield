@@ -103,7 +103,7 @@ public class UserController {
     public ResponseEntity<?> approveUser(@AuthenticationPrincipal User execUser, @PathVariable Long userId, @RequestBody UserApprovalDto approvalDTO) {
         try {
             userService.approveUser(execUser, userId, approvalDTO.getDailyLimit(), approvalDTO.getAbsoluteLimit());
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok("User approved successfully.");
         } catch (ResponseStatusException e) {
             return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
         }
@@ -125,7 +125,7 @@ public class UserController {
     public ResponseEntity<?> updateUser(@AuthenticationPrincipal User execUser, @PathVariable Long targetUserId, @RequestBody UserUpdateDto userUpdateDto) {
         try {
             userService.updateUser(execUser, targetUserId, userUpdateDto);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok("User updated successfully.");
         } catch (ResponseStatusException e) {
             return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
         }
@@ -143,11 +143,11 @@ public class UserController {
      * @param targetUserId the unique identifier of the user to delete
      * @return ResponseEntity indicating the result of the deletion operation
      */
-    @PostMapping("/{targetUserId}/delete")
+    @DeleteMapping("/{targetUserId}")
     public ResponseEntity<?> deleteUser(@AuthenticationPrincipal User execUser, @PathVariable Long targetUserId) {
         try {
             userService.deleteUser(execUser, targetUserId);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok("User deleted successfully.");
         } catch (ResponseStatusException e) {
             return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
         }

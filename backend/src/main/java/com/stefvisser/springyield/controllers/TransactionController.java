@@ -39,10 +39,10 @@ public class TransactionController {
             @RequestParam(required = false) String amountOperator
     ) {
         try {
-            PaginatedDataDto<TransactionRequestDto> transactions = transactionService.searchTransactions(
+            PaginatedDataDto<TransactionRequestDto> paginatedTransactions = transactionService.searchTransactions(
                     execUser, query, type, limit, offset, startDate, endDate, amountFrom, amountTo, amountOperator
             );
-            return ResponseEntity.ok(transactions);
+            return ResponseEntity.ok(paginatedTransactions);
         } catch (ResponseStatusException e) {
             return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
         }
@@ -63,7 +63,7 @@ public class TransactionController {
         try {
             List<Transaction> transactions = transactionService.getTransactionsByIban(execUser, iban);
 
-            // TODO: TransactionDto is literally just a Transaction with a static wrap method, just make it  Transaction
+            // Instead of sending Account data, send only the account IBANs instead
             return ResponseEntity.ok(transactions.stream()
                     .map(TransactionRequestDto::wrap)
                     .toList());
@@ -76,6 +76,8 @@ public class TransactionController {
     public ResponseEntity<?> getTransactionsByReference(@AuthenticationPrincipal User execUser, @PathVariable String reference) {
         try {
             List<Transaction> transactions = transactionService.getTransactionsByReference(execUser, reference);
+
+            // Instead of sending Account data, send only the account IBANs instead
             return ResponseEntity.ok(transactions
                     .stream()
                     .map(TransactionRequestDto::wrap)
@@ -88,6 +90,8 @@ public class TransactionController {
     @GetMapping("/transactions")
     public ResponseEntity<List<TransactionRequestDto>> getAllTransactions(@AuthenticationPrincipal User execUser) {
         List<Transaction> transactions = transactionService.getAllTransactions(execUser);
+
+        // Instead of sending Account data, send only the account IBANs instead
         return ResponseEntity.ok(transactions
                 .stream()
                 .map(TransactionRequestDto::wrap)
@@ -98,6 +102,7 @@ public class TransactionController {
     public ResponseEntity<?> createTransaction(@AuthenticationPrincipal User execUser, @RequestBody() TransactionRequestDto transactionReqDTO) {
         try {
             Transaction transaction = transactionService.createTransaction(execUser, transactionReqDTO);
+            // Instead of sending Account data, send only the account IBANs instead
             return ResponseEntity.status(HttpStatus.CREATED).body(TransactionRequestDto.wrap(transaction));
         } catch (ResponseStatusException e) {
             return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
@@ -108,6 +113,7 @@ public class TransactionController {
     public ResponseEntity<?> createAtmTransaction(@AuthenticationPrincipal User execUser, @RequestBody TransactionRequestDto transactionReqDto) {
         try {
             Transaction transaction = transactionService.createAtmTransaction(execUser, transactionReqDto);
+            // Instead of sending Account data, send only the account IBANs instead
             return ResponseEntity.status(HttpStatus.CREATED).body(TransactionRequestDto.wrap(transaction));
         } catch (ResponseStatusException e) {
             return ResponseEntity.status(e.getStatusCode()).body(e.getReason());

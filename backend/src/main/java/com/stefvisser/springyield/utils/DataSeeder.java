@@ -47,7 +47,7 @@ public class DataSeeder {
      * So this method will be executed automatically
      */
     public void initializeDefaultSeederData() {
-        addRandomUsers(250);
+        addRandomUsers(50000);
         createAtmsUser();
         addDefaultUsers();
     }
