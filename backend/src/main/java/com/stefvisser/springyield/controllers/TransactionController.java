@@ -78,8 +78,6 @@ public class TransactionController {
     public ResponseEntity<?> getTransactionsByReference(@AuthenticationPrincipal User execUser, @PathVariable String reference) {
         try {
             List<Transaction> transactions = transactionService.getTransactionsByReference(execUser, reference);
-
-            // TODO: TransactionDto is literally just a Transaction with a static wrap method, just make it  Transaction
             return ResponseEntity.ok(transactions
                     .stream()
                     .map(TransactionRequestDto::wrap)
@@ -92,8 +90,6 @@ public class TransactionController {
     @GetMapping("/transactions")
     public ResponseEntity<List<TransactionRequestDto>> getAllTransactions(@AuthenticationPrincipal User execUser) {
         List<Transaction> transactions = transactionService.getAllTransactions(execUser);
-
-        // TODO: TransactionDto is literally just a Transaction with a static wrap method, just make it  Transaction
         return ResponseEntity.ok(transactions
                 .stream()
                 .map(TransactionRequestDto::wrap)
@@ -104,7 +100,6 @@ public class TransactionController {
     public ResponseEntity<?> createTransaction(@AuthenticationPrincipal User execUser, @RequestBody() TransactionRequestDto transactionReqDTO) {
         try {
             Transaction transaction = transactionService.createTransaction(execUser, transactionReqDTO);
-            // TODO: TransactionDto is literally just a Transaction with a static wrap method, just make it Transaction
             return ResponseEntity.status(HttpStatus.CREATED).body(TransactionRequestDto.wrap(transaction));
         } catch (ResponseStatusException e) {
             return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
@@ -112,45 +107,13 @@ public class TransactionController {
     }
 
     @PostMapping("/atm")
-    public ResponseEntity<?> processAtmTransaction(@AuthenticationPrincipal User execUser, @RequestBody TransactionRequestDto body) {
-        // Retrieve the account by IBAN from the request
-        Account fromAccount = accountService.getAccountByIban(execUser, body.getFromAccString());
-
-        // If the account does not exist, return 404
-        if (fromAccount == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Account not found");
+    public ResponseEntity<?> processAtmTransaction(@AuthenticationPrincipal User execUser, @RequestBody TransactionRequestDto transactionReqDto) {
+        try {
+            Transaction transaction = transactionService.processAtmTransaction(execUser, transactionReqDto);
+            createTransaction(execUser, transactionReqDto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(TransactionRequestDto.wrap(transaction));
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
         }
-
-        // Set both from and to account to the same account for ATM transactions
-        // For ATM transactions, set both from and to account to the same IBAN initially
-        body.setToAccString(body.getFromAccString());
-
-        // Ensure the account is associated with a user
-        if (fromAccount.getUser() == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid account: no user associated");
-        }
-
-        // Retrieve the special ATM user by email
-        User executingUser = userService.findByEmail("atms@springyield.com");
-
-        // If the ATM user does not exist, return 403
-        if (executingUser == null) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("ATM user not found or not authorized to perform this transaction");
-        }
-
-        // Adjust the from/to account based on transaction type
-        if (body.getTransactionType().equals(TransactionType.DEPOSIT)) {
-            // For deposits, money comes from the ATM user to the account
-            body.setFromAccString(executingUser.getAccounts().getFirst().getIban());
-        } else if (body.getTransactionType().equals(TransactionType.WITHDRAW)) {
-            // For withdrawals, money goes from the account to the ATM user
-            body.setToAccString(executingUser.getAccounts().getFirst().getIban());
-        } else {
-            // Invalid transaction type for ATM
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid transaction type for ATM transaction");
-        }
-
-        // Delegate to the general transaction creation logic
-        return createTransaction(executingUser, body);
     }
 }
