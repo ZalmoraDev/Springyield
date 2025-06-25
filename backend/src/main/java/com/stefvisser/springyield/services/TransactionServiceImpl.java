@@ -327,9 +327,24 @@ public class TransactionServiceImpl implements TransactionService {
         if (balance.subtract(transferAmount).compareTo(fromAccount.getBalanceLimit()) < 0) // balanceLimit is negative so the result will be negative
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Insufficient balance for transfer, cannot go below balance limit: " + fromAccount.getBalanceLimit());
 
-        // Validate daily limit if applicable
-        if (transferAmount.compareTo(dailyLimit) > 0)
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Transfer amount exceeds daily limit");
+        // Validate daily exchange limit for external transactions only
+        boolean isExternalTransfer = !fromAccount.getUser().equals(toAccount.getUser());
+        if (isExternalTransfer) {
+            // Check if a single external transfer exceeds the daily limit
+            if (transferAmount.compareTo(dailyLimit) > 0)
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Transfer amount exceeds daily limit for external transfers");
+
+            // Calculate the total amount spent today including the current transaction
+            BigDecimal totalSpendToday = (fromAccount.getSpendToday() != null ? fromAccount.getSpendToday() : BigDecimal.ZERO)
+                    .add(transferAmount);
+
+            // Check if the total spent today exceeds the daily limit
+            if (totalSpendToday.compareTo(dailyLimit) > 0)
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "Transaction exceeds daily exchange limit for external transfers. Current spend: "
+                        + fromAccount.getSpendToday() + ", Daily limit: " + dailyLimit
+                );
+        }
 
         // Validate if the transfer amount exceeds the absolute limit
         if (transferAmount.compareTo(fromAccount.getAbsoluteLimit()) > 0) {
@@ -373,6 +388,14 @@ public class TransactionServiceImpl implements TransactionService {
         // Update the balances of both accounts
         fromAccount.setBalance(fromAccount.getBalance().subtract(transaction.getTransferAmount()));
         toAccount.setBalance(toAccount.getBalance().add(transaction.getTransferAmount()));
+
+        // If external transfer, update the spendToday value for the fromAccount
+        boolean isExternalTransfer = !fromAccount.getUser().equals(toAccount.getUser());
+        if (isExternalTransfer) {
+            BigDecimal currentSpendToday = (fromAccount.getSpendToday() != null) ?
+                    fromAccount.getSpendToday() : BigDecimal.ZERO;
+            fromAccount.setSpendToday(currentSpendToday.add(transaction.getTransferAmount()));
+        }
 
         // Add the transaction to both accounts
         fromAccount.getTransactions().add(transaction);

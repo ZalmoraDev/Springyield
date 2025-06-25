@@ -83,6 +83,7 @@ class AccountControllerTest {
                 new BigDecimal("2500.00"),
                 new BigDecimal("10000.00"),
                 AccountStatus.ACTIVE,
+                BigDecimal.ZERO,
                 new ArrayList<>()
         );
 

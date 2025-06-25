@@ -75,17 +75,21 @@ public class DataSeeder {
                     role,
                     new ArrayList<>()
             );
-            for (int i = 0; i < 3; i++) {
-                String iban = this.getRandomIban();
-                generatedIbans.add(iban);
-                Account account = this.createAccount(iban);
-                account.setUser(user);
-                user.getAccounts().add(account);
-                accounts.add(account);
 
-                // Create initial deposit transaction for each account
-                Transaction depositTransaction = createInitialDepositTransaction(iban, account.getBalance());
-                generatedTransactions.add(depositTransaction);
+            // No admin, employee, or approved user should have accounts
+            if (!user.getRole().equals(UserRole.APPROVED)) {
+                for (int i = 0; i < 3; i++) {
+                    String iban = this.getRandomIban();
+                    generatedIbans.add(iban);
+                    Account account = this.createAccount(iban);
+                    account.setUser(user);
+                    user.getAccounts().add(account);
+                    accounts.add(account);
+
+                    // Create initial deposit transaction for each account
+                    Transaction depositTransaction = createInitialDepositTransaction(iban, account.getBalance());
+                    generatedTransactions.add(depositTransaction);
+                }
             }
             users.add(user);
         }
@@ -232,9 +236,9 @@ public class DataSeeder {
 
     private void createAtmsUser() {
         User atmsUser = new User(
-                "ATMS",
-                "System",
-                bCryptPasswordEncoder.encode("atmspass"),
+                "ATM",
+                "Springyield",
+                bCryptPasswordEncoder.encode("atmPass"),
                 "atms@springyield.com",
                 987654321,
                 "0687654321",
@@ -250,7 +254,7 @@ public class DataSeeder {
                 atmsIbanBuilder.buildRandom().toFormattedString(),
                 java.time.LocalDate.now(), AccountType.PAYMENT,
                 new BigDecimal("10000000.00"), new BigDecimal("5000000.00"), new BigDecimal("999999999.99"),
-                new BigDecimal("-1000000.00"), AccountStatus.ACTIVE, new ArrayList<>());
+                new BigDecimal("-1000000.00"), AccountStatus.ACTIVE, BigDecimal.ZERO, new ArrayList<>());
 
         atmsUser.getAccounts().add(atmsAccount);
         userService.save(atmsUser); // Save user, which cascades to account

@@ -104,6 +104,7 @@ class TransactionServiceImplTest {
                 new BigDecimal("2500.00"),
                 new BigDecimal("-1000.00"),
                 AccountStatus.ACTIVE,
+                BigDecimal.ZERO,
                 new ArrayList<>()
         );
 
@@ -119,6 +120,7 @@ class TransactionServiceImplTest {
                 new BigDecimal("1500.00"),
                 new BigDecimal("10000.00"),
                 AccountStatus.ACTIVE,
+                BigDecimal.ZERO,
                 new ArrayList<>()
         );
 
@@ -134,6 +136,7 @@ class TransactionServiceImplTest {
                 new BigDecimal("1000000.00"),
                 new BigDecimal("1000000.00"),
                 AccountStatus.ACTIVE,
+                BigDecimal.ZERO,
                 new ArrayList<>()
         );
 
@@ -558,6 +561,7 @@ class TransactionServiceImplTest {
                 new BigDecimal("2500.00"),
                 new BigDecimal("10000.00"),
                 AccountStatus.ACTIVE,
+                BigDecimal.ZERO,
                 new ArrayList<>()
         );
 

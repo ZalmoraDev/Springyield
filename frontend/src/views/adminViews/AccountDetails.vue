@@ -273,7 +273,10 @@ onMounted(() => {
             </div>
             <div class="bg-gray-50 p-4 rounded-lg ring-1 ring-gray-200">
               <p class="text-sm text-gray-500">Account Balance Limit</p>
-              <p class="font-medium text-lg text-gray-700">€{{ a.balanceLimit }}</p>
+              <p class="font-medium text-xl truncate"
+                 :class="{'text-green-500': a.balanceLimit >= 0, 'text-red-500': a.balanceLimit < 0}">
+                {{ formatCurrency(a.balanceLimit) }}
+              </p>
             </div>
           </div>
 

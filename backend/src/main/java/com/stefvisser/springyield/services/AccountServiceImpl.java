@@ -155,7 +155,8 @@ public class AccountServiceImpl implements AccountService {
                 absoluteLimit,
                 initialBalance,
                 balanceLimit,
-                AccountStatus.ACTIVE,  // status always ACTIVE for new accounts
+                AccountStatus.ACTIVE,  // status always ACTIVE for new accounts,
+                BigDecimal.ZERO,       // spendToday always 0 for new accounts
                 new ArrayList<>()      // transaction list always empty for new accounts
         );
 

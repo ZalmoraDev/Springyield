@@ -84,6 +84,7 @@ class AccountServiceImplTest {
                 new BigDecimal("2500.00"),
                 new BigDecimal("10000.00"),
                 AccountStatus.ACTIVE,
+                BigDecimal.ZERO,
                 new ArrayList<>()
         );
 
@@ -99,6 +100,7 @@ class AccountServiceImplTest {
                 new BigDecimal("1500.00"),
                 new BigDecimal("10000.00"),
                 AccountStatus.ACTIVE,
+                BigDecimal.ZERO,
                 new ArrayList<>()
         );
 

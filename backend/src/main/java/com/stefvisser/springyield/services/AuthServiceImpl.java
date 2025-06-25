@@ -3,6 +3,7 @@ package com.stefvisser.springyield.services;
 import com.stefvisser.springyield.dto.AuthSessionDto;
 import com.stefvisser.springyield.dto.UserLoginDto;
 import com.stefvisser.springyield.dto.UserSignupDto;
+import com.stefvisser.springyield.models.Account;
 import com.stefvisser.springyield.models.User;
 import com.stefvisser.springyield.models.UserRole;
 import com.stefvisser.springyield.repositories.AuthRepository;
@@ -18,7 +19,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.math.BigDecimal;
 import java.security.Key;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -67,7 +70,30 @@ public class AuthServiceImpl implements AuthService {
             // If the user does not exist, throw an unauthorized exception
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid email or password");
 
+        // Check if we need to reset spendToday values for accounts
+        checkDailySpendLimitReset(user);
+
         return createNewLoginSession(user);
+    }
+
+    /**
+     * Reset the spendToday values of all accounts if the user hasn't logged in today
+     */
+    private void checkDailySpendLimitReset(User user) {
+        LocalDate today = LocalDate.now();
+        LocalDate lastLogin = user.getLastLoginDate();
+
+        // If this is the first login or user logged in on a different day
+        if (lastLogin == null || !lastLogin.equals(today)) {
+            // Reset spendToday for all accounts
+            for (Account account : user.getAccounts()) {
+                account.setSpendToday(BigDecimal.ZERO);
+            }
+
+            // Update the last login date
+            user.setLastLoginDate(today);
+            authRepository.save(user);
+        }
     }
 
     // Create a new login session for the user, used by signup and login
@@ -90,12 +116,10 @@ public class AuthServiceImpl implements AuthService {
                 .compact();
     }
 
-    
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
-    
     public boolean isTokenValid(String token, UserDetails userDetails) {
         try {
             final String username = extractUsername(token);

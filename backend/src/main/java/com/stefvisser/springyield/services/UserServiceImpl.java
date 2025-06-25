@@ -15,7 +15,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-
 @Primary
 @Service
 class UserServiceImpl implements UserService {

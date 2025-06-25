@@ -51,6 +51,9 @@ public class Account {
     /// indicates if this account is active or has been deactivated (e.g., after user deletion)
     private AccountStatus status;
 
+    /// the amount of money that has been spent today (0:00 - 23:59)
+    private BigDecimal spendToday;
+
     @JsonIgnore
     @OneToMany(mappedBy = "fromAccount", cascade = CascadeType.ALL)
     private List<Transaction> transactions = new ArrayList<>();
