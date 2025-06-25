@@ -119,11 +119,7 @@ class UserControllerTest {
     void approveUser_Success() {
         // Arrange
         Long userId = 1L;
-        UserApprovalDto approvalDto = new UserApprovalDto();
-        approvalDto.setDailyLimit(new BigDecimal("1000.00"));
-        approvalDto.setAbsoluteLimit(new BigDecimal("5000.00"));
-        approvalDto.setBalanceLimit(new BigDecimal("-500.00"));
-
+        UserApprovalDto approvalDto = new UserApprovalDto(new BigDecimal("1000.00"),new BigDecimal("5000.00"), new BigDecimal("-500.00"));
 
         doNothing().when(userService).approveUser(any(User.class), eq(userId),
                 any(BigDecimal.class), any(BigDecimal.class), any(BigDecimal.class));
