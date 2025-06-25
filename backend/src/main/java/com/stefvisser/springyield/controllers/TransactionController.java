@@ -105,7 +105,7 @@ public class TransactionController {
     }
 
     @PostMapping("/atm")
-    public ResponseEntity<?> processAtmTransaction(@AuthenticationPrincipal User execUser, @RequestBody TransactionRequestDto transactionReqDto) {
+    public ResponseEntity<?> createAtmTransaction(@AuthenticationPrincipal User execUser, @RequestBody TransactionRequestDto transactionReqDto) {
         try {
             Transaction transaction = transactionService.processAtmTransaction(execUser, transactionReqDto);
             createTransaction(execUser, transactionReqDto);

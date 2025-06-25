@@ -118,16 +118,20 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     @Transactional
     public Transaction createTransaction(User execUser, TransactionRequestDto transactionReqDto) {
-        if (execUser == null)
+        // Net zoals @Daan 4 uur werk om deze enkele regel toe te moeten voegen.
+        // User user werkt niet want een authenticatedPrincipal User is niet een user entity...
+        User accountOwner = userService.getUserById(execUser, execUser.getUserId());
+
+        if (accountOwner == null)
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
 
         if (transactionReqDto.getFromAccount() == null || transactionReqDto.getToAccount() == null)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Both from account and to account must be provided");
 
         // Validate the IBANs of the accounts, before retrieving the actual Account objects
-        validateAccounts(execUser, transactionReqDto);
-        Account fromAccount = accountService.getAccountByIban(execUser, transactionReqDto.getFromAccount());
-        Account toAccount = accountService.getAccountByIban(execUser, transactionReqDto.getToAccount());
+        validateAccounts(accountOwner, transactionReqDto);
+        Account fromAccount = accountService.getAccountByIban(accountOwner, transactionReqDto.getFromAccount());
+        Account toAccount = accountService.getAccountByIban(accountOwner, transactionReqDto.getToAccount());
 
         // Validate the transfer between accounts, before creating and saving the transaction
         validateTransfer(fromAccount, toAccount, transactionReqDto.getTransferAmount());
