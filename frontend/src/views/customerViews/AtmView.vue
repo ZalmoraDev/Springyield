@@ -275,7 +275,7 @@ const handleOperationSubmit = async () => {
     if (response.ok) {
       const result = await response.json();
       successMessage.value = `${currentOperationType.value} of €${actualAmount.toFixed(2)} successful.`;
-      currentBalance.value = result.newBalance;
+      fetchAccountBalance(selectedAccountIban.value);
       closeModal();
       operationAmount.value = '';
     } else {
