@@ -81,7 +81,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public List<Transaction> getTransactionsByIBAN(User execUser, String iban) {
+    public List<Transaction> getTransactionsByIban(User execUser, String iban) {
         if (execUser == null)
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
 
@@ -121,13 +121,13 @@ public class TransactionServiceImpl implements TransactionService {
         if (execUser == null)
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
 
-        if (transactionReqDto.getFromAccString() == null || transactionReqDto.getToAccString() == null)
+        if (transactionReqDto.getFromAccount() == null || transactionReqDto.getToAccount() == null)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Both from account and to account must be provided");
 
         // Validate the IBANs of the accounts, before retrieving the actual Account objects
         validateAccounts(execUser, transactionReqDto);
-        Account fromAccount = accountService.getAccountByIban(execUser, transactionReqDto.getFromAccString());
-        Account toAccount = accountService.getAccountByIban(execUser, transactionReqDto.getToAccString());
+        Account fromAccount = accountService.getAccountByIban(execUser, transactionReqDto.getFromAccount());
+        Account toAccount = accountService.getAccountByIban(execUser, transactionReqDto.getToAccount());
 
         // Validate the transfer between accounts, before creating and saving the transaction
         validateTransfer(fromAccount, toAccount, transactionReqDto.getTransferAmount());
@@ -142,14 +142,14 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public Transaction processAtmTransaction(User execUser, TransactionRequestDto transactionReqDTO) {
         // Retrieve the account by IBAN from the request
-        Account fromAccount = accountService.getAccountByIban(execUser, transactionReqDTO.getFromAccString());
+        Account fromAccount = accountService.getAccountByIban(execUser, transactionReqDTO.getFromAccount());
 
         if (fromAccount == null)
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found with IBAN: " + transactionReqDTO.getFromAccString());
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found with IBAN: " + transactionReqDTO.getFromAccount());
 
         // Set both from and to account to the same account for ATM transactions
         // For ATM transactions, set both from and to account to the same IBAN initially
-        transactionReqDTO.setToAccString(transactionReqDTO.getFromAccString());
+        transactionReqDTO.setToAccount(transactionReqDTO.getFromAccount());
 
         // Ensure the account is associated with a user
         if (fromAccount.getUser() == null) {
@@ -165,16 +165,16 @@ public class TransactionServiceImpl implements TransactionService {
         // Adjust the from/to account based on transaction type
         if (transactionReqDTO.getTransactionType().equals(TransactionType.DEPOSIT)) {
             // For deposits, money comes from the ATM user to the account
-            transactionReqDTO.setFromAccString(atmUser.getAccounts().getFirst().getIban());
+            transactionReqDTO.setFromAccount(atmUser.getAccounts().getFirst().getIban());
         } else if (transactionReqDTO.getTransactionType().equals(TransactionType.WITHDRAW)) {
             // For withdrawals, money goes from the account to the ATM user
-            transactionReqDTO.setToAccString(atmUser.getAccounts().getFirst().getIban());
+            transactionReqDTO.setToAccount(atmUser.getAccounts().getFirst().getIban());
         } else {
             // Invalid transaction type for ATM
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid transaction type for ATM: " + transactionReqDTO.getTransactionType());
         }
 
-        Account account = accountService.getAccountByIban(execUser, transactionReqDTO.getFromAccString());
+        Account account = accountService.getAccountByIban(execUser, transactionReqDTO.getFromAccount());
 
         if (transactionReqDTO.getTransactionType() == TransactionType.WITHDRAW) {
             if (account.getBalance().compareTo(transactionReqDTO.getTransferAmount()) < 0) {
@@ -207,8 +207,8 @@ public class TransactionServiceImpl implements TransactionService {
 
     private void validateAccounts(User execUser, TransactionRequestDto transactionReqDto) {
         // Get the temporary Account IBANs strings from the frontend request, and validate them
-        String fromAccString = transactionReqDto.getFromAccString().replace(" ", "").toLowerCase();
-        String toAccString = transactionReqDto.getToAccString().replace(" ", "").toLowerCase();
+        String fromAccString = transactionReqDto.getFromAccount().replace(" ", "").toLowerCase();
+        String toAccString = transactionReqDto.getToAccount().replace(" ", "").toLowerCase();
 
         if (fromAccString.equalsIgnoreCase(toAccString))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "From and To accounts cannot be the same");

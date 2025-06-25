@@ -43,8 +43,8 @@ public class Transaction implements Cloneable {
 
     public static Transaction fromDTO(TransactionRequestDto transactionReqDTO) {
         Transaction transaction = new Transaction();
-        transaction.setFromAccount(transactionReqDTO.getFromAccString());
-        transaction.setToAccount(transactionReqDTO.getToAccString());
+        transaction.setFromAccount(transactionReqDTO.getFromAccount());
+        transaction.setToAccount(transactionReqDTO.getToAccount());
         transaction.setTransferAmount(transactionReqDTO.getTransferAmount());
         transaction.setDescription(transactionReqDTO.getDescription());
         transaction.setReference(transactionReqDTO.getReference());

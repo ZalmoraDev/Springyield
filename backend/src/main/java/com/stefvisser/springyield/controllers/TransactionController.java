@@ -2,9 +2,7 @@ package com.stefvisser.springyield.controllers;
 
 import com.stefvisser.springyield.dto.TransactionRequestDto;
 import com.stefvisser.springyield.dto.PaginatedDataDto;
-import com.stefvisser.springyield.models.Account;
 import com.stefvisser.springyield.models.Transaction;
-import com.stefvisser.springyield.models.TransactionType;
 import com.stefvisser.springyield.models.User;
 import com.stefvisser.springyield.services.TransactionService;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -51,7 +49,7 @@ public class TransactionController {
     }
 
     @GetMapping("/id/{transactionID}")
-    public ResponseEntity<?> getTransactionByID(@AuthenticationPrincipal User execUser, @PathVariable Long transactionID) {
+    public ResponseEntity<?> getTransactionById(@AuthenticationPrincipal User execUser, @PathVariable Long transactionID) {
         try {
             Transaction transaction = transactionService.getTransactionById(execUser, transactionID);
             return ResponseEntity.ok(TransactionRequestDto.wrap(transaction));
@@ -61,9 +59,9 @@ public class TransactionController {
     }
 
     @GetMapping("/iban/{iban}")
-    public ResponseEntity<?> getTransactionsByIBAN(@AuthenticationPrincipal User execUser, @PathVariable String iban) {
+    public ResponseEntity<?> getTransactionsByIban(@AuthenticationPrincipal User execUser, @PathVariable String iban) {
         try {
-            List<Transaction> transactions = transactionService.getTransactionsByIBAN(execUser, iban);
+            List<Transaction> transactions = transactionService.getTransactionsByIban(execUser, iban);
 
             // TODO: TransactionDto is literally just a Transaction with a static wrap method, just make it  Transaction
             return ResponseEntity.ok(transactions.stream()

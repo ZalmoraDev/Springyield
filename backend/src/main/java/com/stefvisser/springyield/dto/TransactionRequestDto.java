@@ -31,12 +31,12 @@ public class TransactionRequestDto {
     /**
      * The account number from which the funds are transferred.
      */
-    private String fromAccString;
+    private String fromAccount;
 
     /**
      * The account number to which the funds are transferred.
      */
-    private String toAccString;
+    private String toAccount;
 
     /**
      * The amount of money transferred in the transaction.

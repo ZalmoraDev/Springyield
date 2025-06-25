@@ -26,7 +26,7 @@ public interface TransactionService {
             String amountOperator
     );
     Transaction getTransactionById(User execUser, long id);
-    List<Transaction> getTransactionsByIBAN(User execUser, String iban);
+    List<Transaction> getTransactionsByIban(User execUser, String iban);
     List<Transaction> getTransactionsByReference(User execUser, String reference);
     List<Transaction> getAllTransactions(User execUser);
     Transaction createTransaction(User execUser, TransactionRequestDto transaction) throws ResponseStatusException;
