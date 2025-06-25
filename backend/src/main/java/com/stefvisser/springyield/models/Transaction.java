@@ -53,7 +53,7 @@ public class Transaction implements Cloneable {
         return transaction;
     }
 
-    @Override
+    
     public Transaction clone() {
         try {
             Transaction clone = (Transaction) super.clone();

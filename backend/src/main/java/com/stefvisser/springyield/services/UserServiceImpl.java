@@ -3,6 +3,7 @@ package com.stefvisser.springyield.services;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+
 import jakarta.transaction.Transactional;
 import com.stefvisser.springyield.dto.*;
 import com.stefvisser.springyield.models.*;
@@ -32,7 +33,6 @@ class UserServiceImpl implements UserService {
     // API Methods
     // -----------------------------------------------------------------------------------------------------------------
 
-    // TODO: Change to UserProfileDto (Otherwise password is returned, which we don't want or need)
     /**
      * Retrieves a user profile by its unique ID.
      * <p>
@@ -73,10 +73,10 @@ class UserServiceImpl implements UserService {
      * </p>
      *
      * @param execUser the authenticated user performing the request
-     * @param query optional search string to filter users by name or other attributes
-     * @param role optional role filter (e.g., CUSTOMER, EMPLOYEE)
-     * @param limit maximum number of results per page (defaults to 10)
-     * @param offset starting position for pagination (defaults to 0)
+     * @param query    optional search string to filter users by name or other attributes
+     * @param role     optional role filter (e.g., CUSTOMER, EMPLOYEE)
+     * @param limit    maximum number of results per page (defaults to 10)
+     * @param offset   starting position for pagination (defaults to 0)
      * @return PaginatedDataDto containing paginated user search results
      */
     public PaginatedDataDto<UserProfileDto> search(User execUser, String query, UserRole role, int limit, int offset) {
@@ -153,7 +153,7 @@ class UserServiceImpl implements UserService {
      * @param userUpdateDto DTO containing the fields from the frontend to update th db with
      * @return ResponseEntity containing the updated execUser profile
      */
-    @Override
+    
     @Transactional
     public UserProfileDto updateUser(User execUser, Long targetUserId, UserUpdateDto userUpdateDto) {
         // Get the authenticated user (the one performing the update)
@@ -194,18 +194,16 @@ class UserServiceImpl implements UserService {
     }
 
     /**
-     * Deletes a user account.
+     * Deletes a user by their ID.
      * <p>
-     * This endpoint allows an authenticated user to delete their own account
-     * or an employee to delete any user account. It prevents employees from
-     * deleting their own accounts.
+     * This method allows an authenticated user to delete another user's profile.
+     * It requires the authenticated user to be an employee or the user themselves to delete their own profile.
      * </p>
      *
-     * @param execUser     the authenticated user performing the deletion
-     * @param targetUserId the unique identifier of the user to delete
-     * @return ResponseEntity indicating the result of the deletion operation
+     * @param execUser      the authenticated user performing the deletion
+     * @param targetUserId  the unique identifier of the target user to delete
      */
-    @Override
+    
     @Transactional
     public void deleteUser(User execUser, Long targetUserId) {
         // Get the authenticated user (the one performing the deletion)
@@ -249,14 +247,39 @@ class UserServiceImpl implements UserService {
     // Non-API Methods (Less authentication required, since they are used internally)
     // -----------------------------------------------------------------------------------------------------------------
 
+    /**
+     * Finds a user by their email address.
+     * <p>
+     * This method is used internally to retrieve a user entity based on their email.
+     * </p>
+     *
+     * @param email the email address of the user to find
+     * @return User entity if found, otherwise null
+     */
     public User findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
+    /**
+     * Saves a user to the database.
+     * <p>
+     * This method is used internally to save a single user entity.
+     * </p>
+     *
+     * @param user the User entity to save
+     */
     public void save(User user) {
         userRepository.save(user);
     }
 
+    /**
+     * Saves a list of users to the database.
+     * <p>
+     * This method is used internally to save multiple user entities at once.
+     * </p>
+     *
+     * @param users the list of User entities to save
+     */
     public void saveAll(List<User> users) {
         userRepository.saveAll(users);
     }

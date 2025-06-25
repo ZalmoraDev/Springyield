@@ -90,12 +90,12 @@ public class AuthServiceImpl implements AuthService {
                 .compact();
     }
 
-    @Override
+    
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
-    @Override
+    
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);

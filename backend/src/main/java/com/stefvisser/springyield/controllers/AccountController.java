@@ -3,46 +3,48 @@ package com.stefvisser.springyield.controllers;
 import com.stefvisser.springyield.dto.*;
 import com.stefvisser.springyield.models.*;
 import com.stefvisser.springyield.services.AccountService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
-import java.util.Objects;
-
-/**
- * REST controller for managing bank accounts.
- * <p>
- * This controller provides endpoints for retrieving, searching, and managing bank accounts.
- * It handles HTTP requests related to account operations and delegates the business logic
- * to the appropriate service classes. All endpoints are mapped to the "/api/account" base path.
- * </p>
- */
 @RestController
 @RequestMapping("/api/account")
 public class AccountController {
 
     private final AccountService accountService;
 
-    /**
-     * Constructs a new AccountController with the required services.
-     *
-     * @param accountService service for account-related operations
-     */
     public AccountController(AccountService accountService) {
         this.accountService = accountService;
     }
 
     /**
-     * Retrieves the account profile for the currently authenticated user.
-     * <p>
-     * This endpoint returns the account details of the user making the request.
-     * </p>
+     * Searches for accounts based on specified criteria with pagination.
      *
-     * @param execUser the currently authenticated user
-     * @return ResponseEntity containing the account profile or an error message
+     * @param execUser the user executing the request
+     * @param query optional search string to filter accounts by various attributes
+     * @param accountType optional account type filter (e.g., CURRENT, SAVINGS)
+     * @param status optional account status filter (e.g., ACTIVE, CLOSED)
+     * @param limit maximum number of results per page (defaults to 10)
+     * @param offset starting position for pagination (defaults to 0)
+     * @return ResponseEntity containing paginated account search results
+     */
+    @GetMapping("/search")
+    public ResponseEntity<?> search(@AuthenticationPrincipal User execUser, @RequestParam(required = false) String query, @RequestParam(required = false) AccountType accountType, @RequestParam(required = false) AccountStatus status, @RequestParam(required = false) Integer limit, @RequestParam(required = false) int offset) {
+        try {
+            PaginatedDataDto<AccountProfileDto> accounts = accountService.search(execUser, query, accountType, status, limit, offset);
+            return ResponseEntity.ok(accounts);
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
+        }
+    }
+
+    /**
+     * Retrieves an account by its IBAN.
+     *
+     * @param execUser the user executing the request
+     * @param iban the IBAN of the account to retrieve
+     * @return ResponseEntity with the account details or error message
      */
     @GetMapping("/iban/{iban}")
     public ResponseEntity<?> getAccountByIban(@AuthenticationPrincipal User execUser, @PathVariable String iban) {
@@ -55,48 +57,12 @@ public class AccountController {
     }
 
     /**
-     * Searches for accounts based on specified criteria with pagination.
-     * <p>
-     * This endpoint allows filtering accounts by a search query and account type,
-     * with results returned in a paginated format for efficient data transfer.
-     * </p>
+     * Updates the balance limits for a specific account.
      *
-     * @param execUser    the currently authenticated user
-     * @param query       optional search string to filter accounts by various attributes
-     * @param accountType optional account type filter (e.g., CURRENT, SAVINGS)
-     * @param status      optional account status filter (e.g., ACTIVE, CLOSED)
-     * @param limit       maximum number of results per page (defaults to 10)
-     * @param offset      starting position for pagination (defaults to 0)
-     * @return ResponseEntity containing paginated account search results
-     */
-    @GetMapping("/search")
-    public ResponseEntity<?> search(@AuthenticationPrincipal User execUser, @RequestParam(required = false) String query, @RequestParam(required = false) AccountType accountType, @RequestParam(required = false) AccountStatus status, @RequestParam(required = false) Integer limit, @RequestParam(required = false) int offset) {
-        try {
-            if (execUser == null)
-                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
-
-            if (!execUser.isEmployee())
-                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to view accounts");
-
-            if (limit == null) limit = 10;
-            if (offset < 0) offset = 0;
-            if (query == null) query = "";
-
-            PaginatedDataDto<AccountProfileDto> accounts = accountService.searchAccount(query, accountType, status, limit, offset);
-            return ResponseEntity.ok(accounts);
-        } catch (ResponseStatusException e) {
-            return ResponseEntity.status(e.getStatusCode()).body(e.getBody());
-        }
-    }
-
-    /**
-     * Retrieves the account profile for the currently authenticated user.
-     * <p>
-     * This endpoint returns the account details of the user making the request.
-     * </p>
-     *
-     * @param execUser the currently authenticated user
-     * @return ResponseEntity containing the account profile or an error message
+     * @param execUser the user executing the request
+     * @param accountId the ID of the account to update
+     * @param limitsDTO the DTO containing the new balance limits
+     * @return ResponseEntity with updated account profile or error message
      */
     @PutMapping("/{accountId}/limits")
     public ResponseEntity<?> updateBalanceLimits(
@@ -104,22 +70,15 @@ public class AccountController {
             @PathVariable Long accountId,
             @RequestBody AccountLimitsDto limitsDTO) {
         try {
-            if (execUser == null)
-                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
-
-            if (!execUser.isEmployee())
-                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to update account limits");
-
             Account updatedAccount = accountService.updateBalanceLimits(
-                    accountId,
+                    execUser, accountId,
                     limitsDTO.getDailyLimit(),
                     limitsDTO.getAbsoluteLimit()
             );
-
             return ResponseEntity.ok(AccountProfileDto.wrap(updatedAccount));
 
         } catch (ResponseStatusException e) {
-            return ResponseEntity.status(e.getStatusCode()).body(e.getBody());
+            return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
         }
     }
 }

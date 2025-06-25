@@ -6,7 +6,6 @@ import com.stefvisser.springyield.dto.TransactionRequestDto;
 import com.stefvisser.springyield.dto.PaginatedDataDto;
 import com.stefvisser.springyield.repositories.TransactionRepository;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -29,7 +28,22 @@ public class TransactionServiceImpl implements TransactionService {
     // -----------------------------------------------------------------------------------------------------------------
     // API Methods
     // -----------------------------------------------------------------------------------------------------------------
-    @Override
+    /**
+     * Searches for transactions based on various criteria with pagination.
+     * This method is intended for use by employees who have permission to search transactions.
+     *
+     * @param execUser The user executing the request (should be an authenticated employee).
+     * @param query The search query string to filter transactions.
+     * @param type The type of transaction to filter by (e.g., "DEPOSIT", "WITHDRAW").
+     * @param limit The maximum number of results to return per page (default is 10).
+     * @param offset The starting position for pagination (default is 0).
+     * @param startDate The start date for filtering transactions.
+     * @param endDate The end date for filtering transactions.
+     * @param amountFrom The minimum amount for filtering transactions.
+     * @param amountTo The maximum amount for filtering transactions.
+     * @param amountOperator The operator to use for filtering amounts (e.g., ">", "<", "=").
+     * @return A PaginatedDataDto containing the search results and pagination information.
+     */
     public PaginatedDataDto<TransactionRequestDto> searchTransactions(
             User execUser,
             String query,
@@ -65,7 +79,14 @@ public class TransactionServiceImpl implements TransactionService {
         );
     }
 
-    @Override
+    /**
+     * Retrieves a transaction by its ID.
+     * This method is intended for use by employees who have permission to view transactions.
+     *
+     * @param execUser The user executing the request (should be an authenticated employee).
+     * @param targetId The ID of the transaction to retrieve.
+     * @return The Transaction object associated with the specified ID.
+     */
     public Transaction getTransactionById(User execUser, long targetId) {
         if (execUser == null)
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
@@ -80,7 +101,14 @@ public class TransactionServiceImpl implements TransactionService {
         return transaction;
     }
 
-    @Override
+    /**
+     * Retrieves transactions by IBAN.
+     * This method is intended for use by both employees and account owners.
+     *
+     * @param execUser The user executing the request (should be an authenticated user).
+     * @param iban The IBAN of the account to search transactions for.
+     * @return A list of transactions associated with the specified IBAN.
+     */
     public List<Transaction> getTransactionsByIban(User execUser, String iban) {
         if (execUser == null)
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
@@ -96,7 +124,15 @@ public class TransactionServiceImpl implements TransactionService {
         return transactionRepository.findByFromAccountOrToAccount(iban, iban);
     }
 
-    @Override
+    /**
+     * Retrieves transactions by their reference number.
+     * This method is intended for use by employees who have permission to search transactions by reference.
+     *
+     * @param execUser The user executing the request (should be an authenticated employee).
+     * @param reference The reference number to search for.
+     * @return A list of transactions matching the reference number.
+     */
+    
     public List<Transaction> getTransactionsByReference(User execUser, String reference) {
         if (execUser == null)
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
@@ -107,7 +143,14 @@ public class TransactionServiceImpl implements TransactionService {
         return transactionRepository.findByReference(reference);
     }
 
-    @Override
+    /**
+     * Retrieves all transactions from the database.
+     * This method is intended for use by employees who have permission to view all transactions.
+     *
+     * @param execUser The user executing the request (should be an authenticated employee).
+     * @return A list of all transactions.
+     */
+    
     public List<Transaction> getAllTransactions(User execUser) {
         if (execUser == null)
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
@@ -115,7 +158,15 @@ public class TransactionServiceImpl implements TransactionService {
         return transactionRepository.findAll();
     }
 
-    @Override
+    /**
+     * Creates a transaction between two accounts based on the provided request DTO.
+     * The transaction is processed with the authenticated user as the account owner.
+     *
+     * @param execUser The user executing the transaction (should be an authenticated user).
+     * @param transactionReqDto The DTO containing transaction details.
+     * @return The created Transaction object.
+     */
+    
     @Transactional
     public Transaction createTransaction(User execUser, TransactionRequestDto transactionReqDto) {
         // Net zoals @Daan 4 uur werk om deze enkele regel toe te moeten voegen.
@@ -143,7 +194,15 @@ public class TransactionServiceImpl implements TransactionService {
         return transaction;
     }
 
-    @Override
+    /**
+     * Creates a transaction for ATM operations, which can be either a deposit or a withdrawal.
+     * The transaction is processed with the ATM user as the counterparty.
+     *
+     * @param execUser The user executing the transaction (should be an ATM user).
+     * @param transactionReqDTO The DTO containing transaction details.
+     * @return The created Transaction object.
+     */
+    
     public Transaction createAtmTransaction(User execUser, TransactionRequestDto transactionReqDTO) {
         // Retrieve the account by IBAN from the request
         Account fromAccount = accountService.getAccountByIban(execUser, transactionReqDTO.getFromAccount());
@@ -198,7 +257,11 @@ public class TransactionServiceImpl implements TransactionService {
     // Non-API Methods (Less authentication required, since they are used internally)
     // -----------------------------------------------------------------------------------------------------------------
 
-    @Override
+    /**
+     * Saves a list of transactions to the database.
+     *
+     * @param transactions The list of transactions to be saved.
+     */
     public void saveAll(List<Transaction> transactions) {
         transactionRepository.saveAll(transactions);
     }
@@ -207,6 +270,12 @@ public class TransactionServiceImpl implements TransactionService {
     // Transfer Validation and Processing
     // -----------------------------------------------------------------------------------------------------------------
 
+    /**
+     * Validates the accounts involved in the transaction.
+     *
+     * @param execUser The user executing the transaction.
+     * @param transactionReqDto The DTO containing transaction details.
+     */
     private void validateAccounts(User execUser, TransactionRequestDto transactionReqDto) {
         // Get the temporary Account IBANs strings from the frontend request, and validate them
         String fromAccString = transactionReqDto.getFromAccount().replace(" ", "").toLowerCase();
@@ -219,6 +288,13 @@ public class TransactionServiceImpl implements TransactionService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User does not have access to the specified accounts");
     }
 
+    /**
+     * Validates the transfer between two accounts based on various criteria.
+     *
+     * @param fromAccount The account from which the funds are transferred.
+     * @param toAccount   The account to which the funds are transferred.
+     * @param transferAmount The amount of money to be transferred.
+     */
     private void validateTransfer(Account fromAccount, Account toAccount, BigDecimal transferAmount) {
         BigDecimal balance = fromAccount.getBalance();
         BigDecimal limit = fromAccount.getAbsoluteLimit();
@@ -255,6 +331,12 @@ public class TransactionServiceImpl implements TransactionService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Transfer amount exceeds daily limit");
     }
 
+    /**
+     * Creates a new transaction from the provided DTO and saves it to the database.
+     *
+     * @param transactionReqDto The DTO containing transaction details.
+     * @return The created Transaction object.
+     */
     private Transaction createAndSaveTransaction(TransactionRequestDto transactionReqDto) {
         Transaction transaction = Transaction.fromDTO(transactionReqDto);
         transaction.setTimestamp(LocalDateTime.now());
@@ -268,6 +350,13 @@ public class TransactionServiceImpl implements TransactionService {
         return transaction;
     }
 
+    /**
+     * Updates the balances of both accounts involved in the transaction and saves the transaction to both accounts.
+     *
+     * @param fromAccount The account from which the funds are transferred.
+     * @param toAccount   The account to which the funds are transferred.
+     * @param transaction The transaction being processed.
+     */
     private void updateToAndFromAccount(Account fromAccount, Account toAccount, Transaction transaction) {
         // Update the balances of both accounts
         fromAccount.setBalance(fromAccount.getBalance().subtract(transaction.getTransferAmount()));

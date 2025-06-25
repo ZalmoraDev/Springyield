@@ -34,7 +34,7 @@ public class UserApprovalDto {
     }
 
     // toString method for debugging
-    @Override
+    
     public String toString() {
         return "UserApprovalDTO{" +
                 "dailyLimit=" + dailyLimit +

@@ -54,12 +54,12 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH}, orphanRemoval = false)
     private List<Account> accounts = new ArrayList<>();
 
-    @Override
+    
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of();
     }
 
-    @Override
+    
     public String getUsername() {
         return email;
     }
