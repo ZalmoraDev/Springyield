@@ -6,7 +6,6 @@ import com.stefvisser.springyield.dto.PaginatedDataDto;
 import com.stefvisser.springyield.models.Account;
 import com.stefvisser.springyield.models.AccountStatus;
 import com.stefvisser.springyield.models.AccountType;
-import com.stefvisser.springyield.models.Transaction;
 import com.stefvisser.springyield.models.User;
 import com.stefvisser.springyield.repositories.AccountRepository;
 import org.iban4j.CountryCode;
@@ -59,7 +58,7 @@ public class AccountServiceImpl implements AccountService {
         if (offset < 0) offset = 0;
         if (query == null) query = "";
 
-        return accountRepository.searchAccount(query, accountType, status, limit, offset);
+        return accountRepository.search(query, accountType, status, limit, offset);
     }
 
     /**

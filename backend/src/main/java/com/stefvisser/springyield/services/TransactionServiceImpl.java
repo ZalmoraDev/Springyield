@@ -169,12 +169,12 @@ public class TransactionServiceImpl implements TransactionService {
     
     @Transactional
     public Transaction createTransaction(User execUser, TransactionRequestDto transactionReqDto) {
+        if (execUser == null)
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
+
         // Net zoals @Daan 4 uur werk om deze enkele regel toe te moeten voegen.
         // User user werkt niet want een authenticatedPrincipal User is niet een user entity...
         User accountOwner = userService.getUserById(execUser, execUser.getUserId());
-
-        if (accountOwner == null)
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
 
         if (transactionReqDto.getFromAccount() == null || transactionReqDto.getToAccount() == null)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Both from account and to account must be provided");
@@ -340,12 +340,18 @@ public class TransactionServiceImpl implements TransactionService {
     private Transaction createAndSaveTransaction(TransactionRequestDto transactionReqDto) {
         Transaction transaction = Transaction.fromDTO(transactionReqDto);
         transaction.setTimestamp(LocalDateTime.now());
+
+        // Generate reference before saving
         transaction.setReference(String.format("TR%d%06d", System.currentTimeMillis(),
                 (transaction.getTransactionId() != null) ?
                         (int) (transaction.getTransactionId() % 1000000) :
                         (int) (Math.random() * 1000000)));
 
-        transactionRepository.save(transaction);
+        // Save the transaction to get an ID
+        Transaction savedTransaction = transactionRepository.save(transaction);
+
+        // Make sure the transaction has the correct ID from the saved entity
+        transaction.setTransactionId(savedTransaction.getTransactionId());
 
         return transaction;
     }

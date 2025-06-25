@@ -97,8 +97,14 @@ public class AuthServiceImpl implements AuthService {
 
     
     public boolean isTokenValid(String token, UserDetails userDetails) {
-        final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
+        try {
+            final String username = extractUsername(token);
+            return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
+        } catch (io.jsonwebtoken.ExpiredJwtException e) {
+            return false; // Token is expired, so it's not valid
+        } catch (Exception e) {
+            return false; // Any other exception means the token is invalid
+        }
     }
 
     private <T> T extractClaim(String token, java.util.function.Function<Claims, T> claimsResolver) {

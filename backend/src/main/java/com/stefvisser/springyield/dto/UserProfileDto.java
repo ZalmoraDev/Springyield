@@ -56,7 +56,7 @@ public class UserProfileDto {
     private String phoneNumber;
 
     /**
-     * The user's role in the system (e.g., CUSTOMER, EMPLOYEE).
+     * The user's role in the system (e.g., APPROVED, EMPLOYEE).
      * <p>
      * This determines the user's access levels and available functionality.
      * </p>

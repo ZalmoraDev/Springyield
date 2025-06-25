@@ -27,7 +27,7 @@ const role = ref(null); // Initialize as null
 
 // Role-based computed properties
 const isAdminOrEmployee = computed(() => role.value === 'EMPLOYEE' || role.value === 'ADMIN');
-const isCustomer = computed(() => role.value === 'CUSTOMER' || role.value === 'APPROVED'); // Assuming CUSTOMER is the primary role for the customer view
+const isCustomer = computed(() => role.value === 'APPROVED'); // Assuming customer is the primary role for the customer view
 
 const logout = () => {
   localStorage.removeItem('token');

@@ -66,7 +66,7 @@ public class UserController {
      *
      * @param execUser the authenticated user performing the request
      * @param query optional search string to filter users by name or other attributes
-     * @param role optional role filter (e.g., CUSTOMER, EMPLOYEE)
+     * @param role optional role filter (e.g., APPROVED, EMPLOYEE)
      * @param limit maximum number of results per page (defaults to 10)
      * @param offset starting position for pagination (defaults to 0)
      * @return ResponseEntity containing paginated execUser search results
