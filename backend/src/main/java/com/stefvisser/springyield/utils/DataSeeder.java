@@ -49,7 +49,7 @@ public class DataSeeder {
      * So this method will be executed automatically
      */
     public void initializeDefaultSeederData() {
-        addRandomUsers(50000);
+        addRandomUsers(5000);
         createAtmsUser();
         addDefaultUsers();
     }
@@ -166,10 +166,10 @@ public class DataSeeder {
     private Account createAccount(String iban) {
         Account account = new Account();
         account.setIban(iban);
-        account.setBalance(BigDecimal.valueOf(faker.number().randomDouble(2, -1000, 10000)));
-        account.setDailyLimit(BigDecimal.valueOf(faker.number().randomDouble(2, 1000, 10000)));
-        account.setAbsoluteLimit(BigDecimal.valueOf(faker.number().randomDouble(2, 1000, 10000)));
-        account.setBalanceLimit(BigDecimal.valueOf(faker.number().randomDouble(2, -1000, 0)));
+        account.setBalance(BigDecimal.valueOf(faker.number().randomDouble(2, -500, 10000)));
+        account.setDailyLimit(BigDecimal.valueOf(2000));
+        account.setAbsoluteLimit(BigDecimal.valueOf(1000));
+        account.setBalanceLimit(BigDecimal.valueOf(-500)); // Set a fixed balance limit
         account.setStatus(AccountStatus.ACTIVE); // Set all newly created accounts as active
 
         if (faker.number().numberBetween(0, 100) < 50)

@@ -26,7 +26,6 @@ public class AuthController {
             AuthSessionDto response = authService.login(loginDto);
             return ResponseEntity.ok(response);
         } catch (ResponseStatusException e) {
-            // Catch any response status exceptions and return the appropriate HTTP status and message
             return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
         }
     }
@@ -37,7 +36,6 @@ public class AuthController {
             AuthSessionDto response = authService.signup(signupDto);
             return ResponseEntity.ok(response);
         } catch (ResponseStatusException e) {
-            // Return the reason as the response body for better frontend error handling
             return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
         }
     }

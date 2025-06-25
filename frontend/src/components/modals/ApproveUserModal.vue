@@ -1,3 +1,46 @@
+<script setup>
+import axios from 'axios'
+import {API_BASE_URL} from '@/config.js'
+import {ref} from 'vue'
+
+const props = defineProps({
+  show: Boolean,
+  user: Object,
+  token: String
+})
+
+const emit = defineEmits(['close', 'approve-success', 'approve-error'])
+const dailyLimit = ref(2000) // Default value
+const absoluteLimit = ref(100) // Default value
+const balanceLimit = ref(-500) // Default value
+
+const handleConfirm = async () => {
+  if (!props.user?.userId || !props.token) {
+    emit('approve-error', 'Missing required data')
+    return
+  }
+
+  try {
+    await axios.put(
+        `${API_BASE_URL}/user/${props.user.userId}/approve`,
+        {
+          dailyLimit: dailyLimit.value,
+          absoluteLimit: absoluteLimit.value,
+          balanceLimit: balanceLimit.value
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${props.token}`
+          }
+        }
+    )
+    emit('approve-success', props.user)
+  } catch (err) {
+    emit('approve-error', err.response?.data?.message || 'Failed to approve user.')
+  }
+}
+</script>
+
 <template>
   <div v-if="show"
        class="fixed inset-0 bg-green-500/20 bg-opacity-50 backdrop-blur-sm overflow-y-auto h-full w-full flex items-center justify-center z-50">
@@ -30,6 +73,16 @@
                   step="0.01"
               />
             </div>
+            <div class="mb-3">
+              <label class="block text-sm font-medium text-gray-700">Account Balance Limit (€)</label>
+              <input
+                  type="number"
+                  v-model="balanceLimit"
+                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
+                  min="0"
+                  step="0.01"
+              />
+            </div>
           </div>
         </div>
         <div class="flex justify-center mt-4 space-x-4">
@@ -50,44 +103,3 @@
     </div>
   </div>
 </template>
-
-<script setup>
-import axios from 'axios'
-import {API_BASE_URL} from '@/config.js'
-import {ref} from 'vue'
-
-const props = defineProps({
-  show: Boolean,
-  user: Object,
-  token: String
-})
-
-const emit = defineEmits(['close', 'approve-success', 'approve-error'])
-const dailyLimit = ref(1000) // Default value
-const absoluteLimit = ref(500) // Default value
-
-const handleConfirm = async () => {
-  if (!props.user?.userId || !props.token) {
-    emit('approve-error', 'Missing required data')
-    return
-  }
-
-  try {
-    await axios.put(
-        `${API_BASE_URL}/user/${props.user.userId}/approve`,
-        {
-          dailyLimit: dailyLimit.value,
-          absoluteLimit: absoluteLimit.value
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${props.token}`
-          }
-        }
-    )
-    emit('approve-success', props.user)
-  } catch (err) {
-    emit('approve-error', err.response?.data?.message || 'Failed to approve user.')
-  }
-}
-</script>

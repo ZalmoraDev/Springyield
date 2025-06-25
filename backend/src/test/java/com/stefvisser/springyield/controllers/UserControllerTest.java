@@ -122,9 +122,11 @@ class UserControllerTest {
         UserApprovalDto approvalDto = new UserApprovalDto();
         approvalDto.setDailyLimit(new BigDecimal("1000.00"));
         approvalDto.setAbsoluteLimit(new BigDecimal("5000.00"));
+        approvalDto.setBalanceLimit(new BigDecimal("-500.00"));
+
 
         doNothing().when(userService).approveUser(any(User.class), eq(userId),
-                any(BigDecimal.class), any(BigDecimal.class));
+                any(BigDecimal.class), any(BigDecimal.class), any(BigDecimal.class));
 
         // Act
         ResponseEntity<?> response = userController.approveUser(testUser, userId, approvalDto);
@@ -133,7 +135,7 @@ class UserControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("User approved successfully.", response.getBody());
         verify(userService, times(1)).approveUser(any(User.class), eq(userId),
-                eq(approvalDto.getDailyLimit()), eq(approvalDto.getAbsoluteLimit()));
+                eq(approvalDto.getDailyLimit()), eq(approvalDto.getAbsoluteLimit()), eq(approvalDto.getBalanceLimit()));
     }
 
     @Test

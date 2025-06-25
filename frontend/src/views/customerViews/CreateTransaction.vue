@@ -226,12 +226,20 @@ const handleTransactionSubmit = async () => {
       showSuccessAnimation.value = true;
       fetchUserAndAccounts();
     } else {
-      const errorData = await response.json().catch(() => ({ message: 'Transaction failed. Please try again.' }));
-      errorMessage.value = errorData.message;
+      // Get the error text directly from the response
+      const errorText = await response.text();
+      try {
+        // Try to parse as JSON first (in case it's a structured error response)
+        const errorObj = JSON.parse(errorText);
+        errorMessage.value = errorObj.message || errorObj.error || errorObj.detail || errorText;
+      } catch (e) {
+        // If parsing fails, use the raw text
+        errorMessage.value = errorText;
+      }
       showSuccessAnimation.value = false;
     }
   } catch (error) {
-    errorMessage.value = 'An error occurred while submitting the transaction. Please check your connection.';
+    errorMessage.value = error.message || 'An error occurred while submitting the transaction. Please check your connection.';
     showSuccessAnimation.value = false;
   } finally {
     isSubmitting.value = false;

@@ -73,7 +73,8 @@ public class AccountController {
             Account updatedAccount = accountService.updateBalanceLimits(
                     execUser, accountId,
                     limitsDTO.getDailyLimit(),
-                    limitsDTO.getAbsoluteLimit()
+                    limitsDTO.getAbsoluteLimit(),
+                    limitsDTO.getBalanceLimit()
             );
             return ResponseEntity.ok(AccountProfileDto.wrap(updatedAccount));
 

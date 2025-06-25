@@ -16,7 +16,7 @@ public interface UserService {
     User getUserById(User execUser, Long targetUserId);
     PaginatedDataDto<UserProfileDto> search(User execUser, String query, UserRole role, int limit, int offset);
 
-    void approveUser(User execUser, Long userId, BigDecimal dailyLimit, BigDecimal absoluteLimit);
+    void approveUser(User execUser, Long userId, BigDecimal dailyLimit, BigDecimal absoluteLimit, BigDecimal balanceLimit);
     UserProfileDto updateUser(User execUser, Long targetUserId, UserUpdateDto userUpdateDto);
     void deleteUser(User execUser, Long targetUserId);
 

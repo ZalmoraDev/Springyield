@@ -19,5 +19,5 @@ public class AccountLimitsDto {
     // Getters and setters
     private BigDecimal dailyLimit;
     private BigDecimal absoluteLimit;
-
+    private BigDecimal balanceLimit;
 }

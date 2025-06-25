@@ -210,6 +210,7 @@ class UserServiceImplTest {
         // Arrange
         BigDecimal dailyLimit = new BigDecimal("1000.00");
         BigDecimal absoluteLimit = new BigDecimal("5000.00");
+        BigDecimal balanceLimit = new BigDecimal(-500.00);
 
         when(userRepository.findByUserId(testUnapprovedUser.getUserId())).thenReturn(testUnapprovedUser);
         when(accountService.createAccount(eq(testUnapprovedUser), any(AccountType.class),
@@ -218,7 +219,7 @@ class UserServiceImplTest {
                 .thenReturn(new Account());
 
         // Act
-        userService.approveUser(testEmployee, testUnapprovedUser.getUserId(), dailyLimit, absoluteLimit);
+        userService.approveUser(testEmployee, testUnapprovedUser.getUserId(), dailyLimit, absoluteLimit, balanceLimit);
 
         // Assert
         assertEquals(UserRole.APPROVED, testUnapprovedUser.getRole());
@@ -233,7 +234,7 @@ class UserServiceImplTest {
         // Act & Assert
         ResponseStatusException exception = assertThrows(ResponseStatusException.class,
                 () -> userService.approveUser(null, testUnapprovedUser.getUserId(),
-                        BigDecimal.ONE, BigDecimal.ONE));
+                        BigDecimal.ONE, BigDecimal.ONE, BigDecimal.ZERO));
 
         assertEquals(HttpStatus.UNAUTHORIZED, exception.getStatusCode());
     }
@@ -243,7 +244,7 @@ class UserServiceImplTest {
         // Act & Assert
         ResponseStatusException exception = assertThrows(ResponseStatusException.class,
                 () -> userService.approveUser(testCustomer, testUnapprovedUser.getUserId(),
-                        BigDecimal.ONE, BigDecimal.ONE));
+                        BigDecimal.ONE, BigDecimal.ONE, BigDecimal.ZERO));
 
         assertEquals(HttpStatus.FORBIDDEN, exception.getStatusCode());
     }

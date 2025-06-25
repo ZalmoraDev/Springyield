@@ -12,7 +12,7 @@ public interface AccountService {
     // API Methods
     PaginatedDataDto<AccountProfileDto> search(User execUser, String query, AccountType accountType, AccountStatus status, int limit, int offset);
     Account getAccountByIban(User execUser, String iban);
-    Account updateBalanceLimits(User execUser, Long accountId, BigDecimal dailyLimit, BigDecimal absoluteLimit);
+    Account updateBalanceLimits(User execUser, Long accountId, BigDecimal dailyLimit, BigDecimal absoluteLimit, BigDecimal balanceLimit);
 
 
     // Non-API Methods (Less authentication required, since they are used internally)

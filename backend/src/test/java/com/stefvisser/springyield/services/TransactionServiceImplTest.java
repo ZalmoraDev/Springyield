@@ -102,7 +102,7 @@ class TransactionServiceImplTest {
                 new BigDecimal("1000.00"),
                 new BigDecimal("5000.00"),
                 new BigDecimal("2500.00"),
-                new BigDecimal("10000.00"),
+                new BigDecimal("-1000.00"),
                 AccountStatus.ACTIVE,
                 new ArrayList<>()
         );
@@ -494,7 +494,7 @@ class TransactionServiceImplTest {
                 () -> transactionService.createTransaction(testCustomer, largeAmountDto));
 
         assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
-        assertEquals("Insufficient balance for transfer", exception.getReason());
+        assertEquals("Insufficient balance for transfer, cannot go below balance limit: -1000.00", exception.getReason());
     }
 
     @Test

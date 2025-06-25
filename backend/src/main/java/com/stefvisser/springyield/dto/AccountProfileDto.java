@@ -25,65 +25,13 @@ public class AccountProfileDto {
      */
     private Long accountId;
 
-    /**
-     * The International Bank Account Number (IBAN) for the account.
-     * <p>
-     * This serves as the internationally recognized account identifier for
-     * transactions and external references.
-     * </p>
-     */
     private String iban;
-
-    /**
-     * The user associated with this bank account.
-     * <p>
-     * This represents the owner of the account, providing a link to the user's
-     * profile and personal information.
-     * </p>
-     */
     private User user;
-    /**
-     * The type of the bank account (e.g., CURRENT, SAVINGS).
-     * <p>
-     * This determines the account's features, limitations, and intended use.
-     * </p>
-     */
     private AccountType accountType;
-
-    /**
-     * The current balance of the account.
-     * <p>
-     * This represents the amount of funds available in the account at the
-     * time the DTO was created.
-     * </p>
-     */
     private BigDecimal balance;
-
-    /**
-     * The daily limit for transactions on this account.
-     * <p>
-     * This indicates the maximum amount that can be transferred in a single day,
-     * helping to prevent fraud and manage spending.
-     * </p>
-     */
     private BigDecimal dailyLimit;
-
-    /**
-     * The absolute limit for transactions on this account.
-     * <p>
-     * This indicates the maximum amount that can be transferred in a single transaction,
-     * providing a safeguard against large unauthorized transfers.
-     * </p>
-     */
     private BigDecimal absoluteLimit;
-
-    /**
-     * Whether the account is active or has been deactivated.
-     * <p>
-     * This indicates if the account is currently active and can be used
-     * for transactions, or if it has been deactivated (e.g., after user deletion).
-     * </p>
-     */
+    private BigDecimal balanceLimit;
     private AccountStatus status;
 
     /**
@@ -103,6 +51,7 @@ public class AccountProfileDto {
         this.balance = account.getBalance();
         this.dailyLimit = account.getDailyLimit();
         this.absoluteLimit = account.getAbsoluteLimit();
+        this.balanceLimit = account.getBalanceLimit();
         this.status = account.getStatus();
     }
 

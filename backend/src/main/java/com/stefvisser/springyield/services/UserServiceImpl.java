@@ -103,7 +103,7 @@ class UserServiceImpl implements UserService {
      * @ Transactional ensures that the operation is atomic, meaning either all changes are applied or none.
      */
     @Transactional
-    public void approveUser(User execUser, Long targetUserId, BigDecimal dailyLimit, BigDecimal absoluteLimit) {
+    public void approveUser(User execUser, Long targetUserId, BigDecimal dailyLimit, BigDecimal absoluteLimit, BigDecimal balanceLimit) {
         if (execUser == null)
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
 
@@ -122,7 +122,6 @@ class UserServiceImpl implements UserService {
         userRepository.save(targetUser);
 
         // Create accounts
-        BigDecimal balanceLimit = new BigDecimal("500.00");
         BigDecimal initialBalance = BigDecimal.ZERO;
 
         // Create normal account and savings account to the database

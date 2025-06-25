@@ -28,19 +28,20 @@ public class TransactionServiceImpl implements TransactionService {
     // -----------------------------------------------------------------------------------------------------------------
     // API Methods
     // -----------------------------------------------------------------------------------------------------------------
+
     /**
      * Searches for transactions based on various criteria with pagination.
      * This method is intended for use by employees who have permission to search transactions.
      *
-     * @param execUser The user executing the request (should be an authenticated employee).
-     * @param query The search query string to filter transactions.
-     * @param type The type of transaction to filter by (e.g., "DEPOSIT", "WITHDRAW").
-     * @param limit The maximum number of results to return per page (default is 10).
-     * @param offset The starting position for pagination (default is 0).
-     * @param startDate The start date for filtering transactions.
-     * @param endDate The end date for filtering transactions.
-     * @param amountFrom The minimum amount for filtering transactions.
-     * @param amountTo The maximum amount for filtering transactions.
+     * @param execUser       The user executing the request (should be an authenticated employee).
+     * @param query          The search query string to filter transactions.
+     * @param type           The type of transaction to filter by (e.g., "DEPOSIT", "WITHDRAW").
+     * @param limit          The maximum number of results to return per page (default is 10).
+     * @param offset         The starting position for pagination (default is 0).
+     * @param startDate      The start date for filtering transactions.
+     * @param endDate        The end date for filtering transactions.
+     * @param amountFrom     The minimum amount for filtering transactions.
+     * @param amountTo       The maximum amount for filtering transactions.
      * @param amountOperator The operator to use for filtering amounts (e.g., ">", "<", "=").
      * @return A PaginatedDataDto containing the search results and pagination information.
      */
@@ -106,7 +107,7 @@ public class TransactionServiceImpl implements TransactionService {
      * This method is intended for use by both employees and account owners.
      *
      * @param execUser The user executing the request (should be an authenticated user).
-     * @param iban The IBAN of the account to search transactions for.
+     * @param iban     The IBAN of the account to search transactions for.
      * @return A list of transactions associated with the specified IBAN.
      */
     public List<Transaction> getTransactionsByIban(User execUser, String iban) {
@@ -128,11 +129,11 @@ public class TransactionServiceImpl implements TransactionService {
      * Retrieves transactions by their reference number.
      * This method is intended for use by employees who have permission to search transactions by reference.
      *
-     * @param execUser The user executing the request (should be an authenticated employee).
+     * @param execUser  The user executing the request (should be an authenticated employee).
      * @param reference The reference number to search for.
      * @return A list of transactions matching the reference number.
      */
-    
+
     public List<Transaction> getTransactionsByReference(User execUser, String reference) {
         if (execUser == null)
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
@@ -150,7 +151,7 @@ public class TransactionServiceImpl implements TransactionService {
      * @param execUser The user executing the request (should be an authenticated employee).
      * @return A list of all transactions.
      */
-    
+
     public List<Transaction> getAllTransactions(User execUser) {
         if (execUser == null)
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
@@ -162,11 +163,11 @@ public class TransactionServiceImpl implements TransactionService {
      * Creates a transaction between two accounts based on the provided request DTO.
      * The transaction is processed with the authenticated user as the account owner.
      *
-     * @param execUser The user executing the transaction (should be an authenticated user).
+     * @param execUser          The user executing the transaction (should be an authenticated user).
      * @param transactionReqDto The DTO containing transaction details.
      * @return The created Transaction object.
      */
-    
+
     @Transactional
     public Transaction createTransaction(User execUser, TransactionRequestDto transactionReqDto) {
         if (execUser == null)
@@ -198,11 +199,11 @@ public class TransactionServiceImpl implements TransactionService {
      * Creates a transaction for ATM operations, which can be either a deposit or a withdrawal.
      * The transaction is processed with the ATM user as the counterparty.
      *
-     * @param execUser The user executing the transaction (should be an ATM user).
+     * @param execUser          The user executing the transaction (should be an ATM user).
      * @param transactionReqDTO The DTO containing transaction details.
      * @return The created Transaction object.
      */
-    
+
     public Transaction createAtmTransaction(User execUser, TransactionRequestDto transactionReqDTO) {
         // Retrieve the account by IBAN from the request
         Account fromAccount = accountService.getAccountByIban(execUser, transactionReqDTO.getFromAccount());
@@ -273,7 +274,7 @@ public class TransactionServiceImpl implements TransactionService {
     /**
      * Validates the accounts involved in the transaction.
      *
-     * @param execUser The user executing the transaction.
+     * @param execUser          The user executing the transaction.
      * @param transactionReqDto The DTO containing transaction details.
      */
     private void validateAccounts(User execUser, TransactionRequestDto transactionReqDto) {
@@ -291,13 +292,13 @@ public class TransactionServiceImpl implements TransactionService {
     /**
      * Validates the transfer between two accounts based on various criteria.
      *
-     * @param fromAccount The account from which the funds are transferred.
-     * @param toAccount   The account to which the funds are transferred.
+     * @param fromAccount    The account from which the funds are transferred.
+     * @param toAccount      The account to which the funds are transferred.
      * @param transferAmount The amount of money to be transferred.
      */
     private void validateTransfer(Account fromAccount, Account toAccount, BigDecimal transferAmount) {
         BigDecimal balance = fromAccount.getBalance();
-        BigDecimal limit = fromAccount.getAbsoluteLimit();
+        BigDecimal absoluteLimit = fromAccount.getAbsoluteLimit();
         BigDecimal dailyLimit = fromAccount.getDailyLimit();
 
         // Validate accounts existence
@@ -319,16 +320,21 @@ public class TransactionServiceImpl implements TransactionService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Transfer amount must be greater than zero");
 
         // Validate against account limit
-        if (transferAmount.compareTo(limit) > 0)
+        if (transferAmount.compareTo(absoluteLimit) > 0)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Transfer amount exceeds account limit");
 
         // Validate sufficient balance
-        if (balance.subtract(transferAmount).compareTo(BigDecimal.ZERO) < 0)
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Insufficient balance for transfer");
+        if (balance.subtract(transferAmount).compareTo(fromAccount.getBalanceLimit()) < 0) // balanceLimit is negative so the result will be negative
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Insufficient balance for transfer, cannot go below balance limit: " + fromAccount.getBalanceLimit());
 
         // Validate daily limit if applicable
-        if (fromAccount.getDailyLimit() != null && transferAmount.compareTo(dailyLimit) > 0)
+        if (transferAmount.compareTo(dailyLimit) > 0)
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Transfer amount exceeds daily limit");
+
+        // Validate if the transfer amount exceeds the absolute limit
+        if (transferAmount.compareTo(fromAccount.getAbsoluteLimit()) > 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Transfer amount exceeds absolute limit");
+        }
     }
 
     /**

@@ -253,14 +253,15 @@ class AccountServiceImplTest {
     void updateBalanceLimits_Success() {
         // Arrange
         Long accountId = testAccount.getAccountId();
-        BigDecimal newDailyLimit = new BigDecimal("2000.00");
-        BigDecimal newAbsoluteLimit = new BigDecimal("10000.00");
+        BigDecimal newDailyLimit = BigDecimal.valueOf(2000.00);
+        BigDecimal newAbsoluteLimit = BigDecimal.valueOf(10000.00);
+        BigDecimal newBalanceLimit = BigDecimal.valueOf(-500.00);
 
         when(accountRepository.findByAccountId(accountId)).thenReturn(Optional.of(testAccount));
         when(accountRepository.save(any(Account.class))).thenReturn(testAccount);
 
         // Act
-        Account result = accountService.updateBalanceLimits(testEmployee, accountId, newDailyLimit, newAbsoluteLimit);
+        Account result = accountService.updateBalanceLimits(testEmployee, accountId, newDailyLimit, newAbsoluteLimit, newBalanceLimit);
 
         // Assert
         assertNotNull(result);
@@ -274,7 +275,7 @@ class AccountServiceImplTest {
     void updateBalanceLimits_Unauthorized() {
         // Act & Assert
         ResponseStatusException exception = assertThrows(ResponseStatusException.class,
-                () -> accountService.updateBalanceLimits(null, 1L, BigDecimal.ONE, BigDecimal.ONE));
+                () -> accountService.updateBalanceLimits(null, 1L, BigDecimal.ONE, BigDecimal.ONE, BigDecimal.ZERO));
 
         assertEquals(HttpStatus.UNAUTHORIZED, exception.getStatusCode());
         assertEquals("User not authenticated", exception.getReason());
@@ -284,7 +285,7 @@ class AccountServiceImplTest {
     void updateBalanceLimits_Forbidden_NonEmployee() {
         // Act & Assert
         ResponseStatusException exception = assertThrows(ResponseStatusException.class,
-                () -> accountService.updateBalanceLimits(testCustomer, 1L, BigDecimal.ONE, BigDecimal.ONE));
+                () -> accountService.updateBalanceLimits(testCustomer, 1L, BigDecimal.ONE, BigDecimal.ONE, BigDecimal.ZERO));
 
         assertEquals(HttpStatus.FORBIDDEN, exception.getStatusCode());
         assertEquals("You do not have permission to update account limits", exception.getReason());

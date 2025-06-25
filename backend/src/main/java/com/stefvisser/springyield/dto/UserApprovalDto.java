@@ -1,44 +1,23 @@
 package com.stefvisser.springyield.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.math.BigDecimal;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserApprovalDto {
     private BigDecimal dailyLimit;
     private BigDecimal absoluteLimit;
-
-    // Default constructor
-    public UserApprovalDto() {
-    }
+    private BigDecimal balanceLimit;
 
     // Constructor with parameters
     public UserApprovalDto(BigDecimal dailyLimit, BigDecimal absoluteLimit) {
         this.dailyLimit = dailyLimit;
         this.absoluteLimit = absoluteLimit;
-    }
-
-    // Getters and setters
-    public BigDecimal getDailyLimit() {
-        return dailyLimit;
-    }
-
-    public void setDailyLimit(BigDecimal dailyLimit) {
-        this.dailyLimit = dailyLimit;
-    }
-
-    public BigDecimal getAbsoluteLimit() {
-        return absoluteLimit;
-    }
-
-    public void setAbsoluteLimit(BigDecimal absoluteLimit) {
-        this.absoluteLimit = absoluteLimit;
-    }
-
-    // toString method for debugging
-    
-    public String toString() {
-        return "UserApprovalDTO{" +
-                "dailyLimit=" + dailyLimit +
-                ", absoluteLimit=" + absoluteLimit +
-                '}';
+        this.balanceLimit = balanceLimit;
     }
 }

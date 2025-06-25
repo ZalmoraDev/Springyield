@@ -156,11 +156,12 @@ class AccountControllerTest {
         // Arrange
         Long accountId = 1L;
         AccountLimitsDto limitsDto = new AccountLimitsDto();
-        limitsDto.setDailyLimit(new BigDecimal("2000.00"));
-        limitsDto.setAbsoluteLimit(new BigDecimal("10000.00"));
+        limitsDto.setDailyLimit(BigDecimal.valueOf(2000.00));
+        limitsDto.setAbsoluteLimit(BigDecimal.valueOf(10000.00));
+        limitsDto.setBalanceLimit(BigDecimal.valueOf(-500.00));
 
         when(accountService.updateBalanceLimits(
-                any(User.class), eq(accountId), eq(limitsDto.getDailyLimit()), eq(limitsDto.getAbsoluteLimit())))
+                any(User.class), eq(accountId), eq(limitsDto.getDailyLimit()), eq(limitsDto.getAbsoluteLimit()), eq(limitsDto.getBalanceLimit())))
                 .thenReturn(testAccount);
 
         // Act
@@ -181,9 +182,10 @@ class AccountControllerTest {
         AccountLimitsDto limitsDto = new AccountLimitsDto();
         limitsDto.setDailyLimit(new BigDecimal("2000.00"));
         limitsDto.setAbsoluteLimit(new BigDecimal("10000.00"));
+        limitsDto.setBalanceLimit(new BigDecimal("-500.00"));
 
         when(accountService.updateBalanceLimits(
-                any(User.class), eq(accountId), any(BigDecimal.class), any(BigDecimal.class)))
+                any(User.class), eq(accountId), any(BigDecimal.class), any(BigDecimal.class), any(BigDecimal.class)))
                 .thenThrow(new ResponseStatusException(HttpStatus.FORBIDDEN, "You do not have permission to update account limits"));
 
         // Act

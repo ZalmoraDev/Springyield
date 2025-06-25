@@ -50,12 +50,10 @@ const fetchAccountDetails = async () => {
         }
         // Initialize editableAccount when account data is fetched
         editableAccount.value = JSON.parse(JSON.stringify(foundAccount))
-      } else {
+      } else
         error.value = 'Account not found.'
-      }
-    } else {
+    } else
       error.value = 'Failed to fetch account details or no data returned.'
-    }
   } catch (err) {
     handleError(err)
   } finally {
@@ -96,17 +94,19 @@ const discardChanges = () => {
 const saveChanges = async () => {
   try {
     // Basic validation
-    if (editableAccount.value.dailyLimit < 0 || editableAccount.value.absoluteLimit < 0) {
-      error.value = 'Limits cannot be negative'
-      return
-    }
+    if (editableAccount.value.dailyLimit < 0 || editableAccount.value.absoluteLimit < 0)
+      return error.value = 'Limits cannot be negative'
+    if (editableAccount.value.balanceLimit > 0)
+      return error.value = 'Balance limit must be zero or negative'
+
 
     loading.value = true
     const response = await axios.put(
         `${API_BASE_URL}/account/${a.value.accountId}/limits`,
         {
           dailyLimit: editableAccount.value.dailyLimit,
-          absoluteLimit: editableAccount.value.absoluteLimit
+          absoluteLimit: editableAccount.value.absoluteLimit,
+          balanceLimit: editableAccount.value.balanceLimit
         },
         {
           headers: {
@@ -117,6 +117,7 @@ const saveChanges = async () => {
 
     a.value.dailyLimit = response.data.dailyLimit
     a.value.absoluteLimit = response.data.absoluteLimit
+    a.value.balanceLimit = response.data.balanceLimit
     isEditing.value = false
     toastMessage.value = 'Account limits updated successfully'
     showToast.value = true
@@ -225,7 +226,8 @@ onMounted(() => {
           </div>
           <div class="bg-gray-50 p-4 rounded-lg ring-1 ring-gray-200">
             <p class="text-sm text-gray-500">Current Balance</p>
-            <p class="font-medium text-xl truncate" :class="{'text-green-500': a.balance >= 0, 'text-red-500': a.balance < 0}">
+            <p class="font-medium text-xl truncate"
+               :class="{'text-green-500': a.balance >= 0, 'text-red-500': a.balance < 0}">
               {{ formatCurrency(a.balance) }}
             </p>
           </div>
@@ -260,7 +262,7 @@ onMounted(() => {
         <div class="mb-8 pt-8 border-t border-gray-200">
           <h3 class="text-xl font-semibold text-gray-700 mb-4">Account Limits</h3>
 
-          <div v-if="!isEditing" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div v-if="!isEditing" class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 mb-8">
             <div class="bg-gray-50 p-4 rounded-lg ring-1 ring-gray-200">
               <p class="text-sm text-gray-500">Daily Transfer Limit</p>
               <p class="font-medium text-lg text-gray-700">€{{ a.dailyLimit }}</p>
@@ -268,6 +270,10 @@ onMounted(() => {
             <div class="bg-gray-50 p-4 rounded-lg ring-1 ring-gray-200">
               <p class="text-sm text-gray-500">Absolute Transfer Limit</p>
               <p class="font-medium text-lg text-gray-700">€{{ a.absoluteLimit }}</p>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg ring-1 ring-gray-200">
+              <p class="text-sm text-gray-500">Account Balance Limit</p>
+              <p class="font-medium text-lg text-gray-700">€{{ a.balanceLimit }}</p>
             </div>
           </div>
 
@@ -298,6 +304,22 @@ onMounted(() => {
                   <input
                       type="number"
                       v-model.number="editableAccount.absoluteLimit"
+                      class="block w-full pl-8 pr-3 py-3 border-2 border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white hover:border-gray-400 transition-colors"
+                      min="0"
+                      step="0.01"
+                      placeholder="Enter absolute limit"
+                  />
+                </div>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Account Balance Limit (€)</label>
+                <div class="relative rounded-md shadow-sm">
+                  <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <span class="text-gray-500 sm:text-sm">€</span>
+                  </div>
+                  <input
+                      type="number"
+                      v-model.number="editableAccount.balanceLimit"
                       class="block w-full pl-8 pr-3 py-3 border-2 border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white hover:border-gray-400 transition-colors"
                       min="0"
                       step="0.01"

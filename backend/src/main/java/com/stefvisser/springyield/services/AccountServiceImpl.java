@@ -94,11 +94,12 @@ public class AccountServiceImpl implements AccountService {
      * @param execUser the user executing the request (must be an employee)
      * @param accountId the ID of the account to update
      * @param dailyLimit the new daily limit for the account
-     * @param absoluteLimit the new absolute limit for the account
+     * @param absoluteLimit the new absolute transfer limit for the account
+     * @Param balanceLimit the new balance limit, which is the maximum negative balance allowed
      * @return the updated Account object
      */
     @Transactional
-    public Account updateBalanceLimits(User execUser, Long accountId, BigDecimal dailyLimit, BigDecimal absoluteLimit) {
+    public Account updateBalanceLimits(User execUser, Long accountId, BigDecimal dailyLimit, BigDecimal absoluteLimit, BigDecimal balanceLimit) {
         if (execUser == null)
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
 
@@ -110,6 +111,7 @@ public class AccountServiceImpl implements AccountService {
 
         account.setDailyLimit(dailyLimit);
         account.setAbsoluteLimit(absoluteLimit);
+        account.setBalanceLimit(balanceLimit);
 
         return accountRepository.save(account);
     }

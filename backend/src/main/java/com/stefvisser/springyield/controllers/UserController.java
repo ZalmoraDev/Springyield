@@ -102,7 +102,7 @@ public class UserController {
     @PutMapping("/{userId}/approve")
     public ResponseEntity<?> approveUser(@AuthenticationPrincipal User execUser, @PathVariable Long userId, @RequestBody UserApprovalDto approvalDTO) {
         try {
-            userService.approveUser(execUser, userId, approvalDTO.getDailyLimit(), approvalDTO.getAbsoluteLimit());
+            userService.approveUser(execUser, userId, approvalDTO.getDailyLimit(), approvalDTO.getAbsoluteLimit(), approvalDTO.getBalanceLimit());
             return ResponseEntity.ok("User approved successfully.");
         } catch (ResponseStatusException e) {
             return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
