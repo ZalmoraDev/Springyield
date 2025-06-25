@@ -144,7 +144,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public Transaction processAtmTransaction(User execUser, TransactionRequestDto transactionReqDTO) {
+    public Transaction createAtmTransaction(User execUser, TransactionRequestDto transactionReqDTO) {
         // Retrieve the account by IBAN from the request
         Account fromAccount = accountService.getAccountByIban(execUser, transactionReqDTO.getFromAccount());
 
@@ -152,7 +152,7 @@ public class TransactionServiceImpl implements TransactionService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found with IBAN: " + transactionReqDTO.getFromAccount());
 
         // Set both from and to account to the same account for ATM transactions
-        // For ATM transactions, set both from and to account to the same IBAN initially
+        // For ATM transactions, set both from and to the same IBAN initially
         transactionReqDTO.setToAccount(transactionReqDTO.getFromAccount());
 
         // Ensure the account is associated with a user
@@ -178,21 +178,19 @@ public class TransactionServiceImpl implements TransactionService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid transaction type for ATM: " + transactionReqDTO.getTransactionType());
         }
 
-        Account account = accountService.getAccountByIban(execUser, transactionReqDTO.getFromAccount());
-
         if (transactionReqDTO.getTransactionType() == TransactionType.WITHDRAW) {
-            if (account.getBalance().compareTo(transactionReqDTO.getTransferAmount()) < 0) {
+            if (fromAccount.getBalance().compareTo(transactionReqDTO.getTransferAmount()) < 0) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Insufficient balance for withdrawal");
             }
-            account.setBalance(account.getBalance().subtract(transactionReqDTO.getTransferAmount()));
+            fromAccount.setBalance(fromAccount.getBalance().subtract(transactionReqDTO.getTransferAmount()));
         } else {
-            account.setBalance(account.getBalance().add(transactionReqDTO.getTransferAmount()));
+            fromAccount.setBalance(fromAccount.getBalance().add(transactionReqDTO.getTransferAmount()));
         }
 
         Transaction transaction = Transaction.fromDTO(transactionReqDTO);
         transaction.setTimestamp(LocalDateTime.now());
 
-        accountService.updateAccount(account);
+        accountService.updateAccount(fromAccount);
         return transactionRepository.save(transaction);
     }
 

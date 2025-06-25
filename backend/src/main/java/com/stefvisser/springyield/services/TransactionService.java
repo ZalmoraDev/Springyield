@@ -30,7 +30,7 @@ public interface TransactionService {
     List<Transaction> getTransactionsByReference(User execUser, String reference);
     List<Transaction> getAllTransactions(User execUser);
     Transaction createTransaction(User execUser, TransactionRequestDto transaction) throws ResponseStatusException;
-    Transaction processAtmTransaction(User execUser, TransactionRequestDto transactionReqDTO);
+    Transaction createAtmTransaction(User execUser, TransactionRequestDto transactionReqDTO);
 
 
     // Non-API Methods (Less authentication required, since they are used internally)

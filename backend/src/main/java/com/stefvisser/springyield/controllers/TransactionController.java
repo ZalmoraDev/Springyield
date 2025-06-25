@@ -107,8 +107,7 @@ public class TransactionController {
     @PostMapping("/atm")
     public ResponseEntity<?> createAtmTransaction(@AuthenticationPrincipal User execUser, @RequestBody TransactionRequestDto transactionReqDto) {
         try {
-            Transaction transaction = transactionService.processAtmTransaction(execUser, transactionReqDto);
-            createTransaction(execUser, transactionReqDto);
+            Transaction transaction = transactionService.createAtmTransaction(execUser, transactionReqDto);
             return ResponseEntity.status(HttpStatus.CREATED).body(TransactionRequestDto.wrap(transaction));
         } catch (ResponseStatusException e) {
             return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
