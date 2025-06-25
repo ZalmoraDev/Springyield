@@ -1,59 +1,3 @@
-<template>
-  <div class="flex min-h-screen bg-gradient-to-br from-sy-900 to-sy-700 text-white">
-    <Sidebar :router="router" :user="user" :role="role" />
-    <main class="flex-1 p-8 flex flex-col h-dvh overflow-y-auto">
-      <h1 class="text-4xl font-bold mb-10 text-sy-100">Welcome, {{ user.firstName }}!</h1>
-
-      <!-- Summary Cards -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-        <div v-for="card in summaryCards" :key="card.title"
-             class="bg-sy-800 p-6 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 cursor-pointer hover:bg-sy-700 transform hover:-translate-y-1"
-             @click="handleCardClick(card.navigation)">
-          <div class="flex items-center justify-between mb-4">
-            <h2 class="text-lg font-semibold text-sy-300">{{ card.title }}</h2>
-            <img :src="card.icon" alt="" class="w-8 h-8 opacity-70" />
-          </div>
-          <p class="text-3xl font-bold text-sy-50">{{ card.value }}</p>
-        </div>
-      </div>
-
-      <!-- Charts Section -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
-        <div class="bg-sy-800 p-6 rounded-xl shadow-lg min-h-[300px] lg:min-h-[400px] flex flex-col justify-center">
-          <Bar v-if="transactionTypeData.labels.length" :data="transactionTypeData" :options="transactionChartOptions" />
-          <p v-else class="text-sy-400 text-xl flex items-center justify-center h-full">Loading Transaction Data...</p>
-        </div>
-        <div class="bg-sy-800 p-6 rounded-xl shadow-lg min-h-[300px] lg:min-h-[400px] flex flex-col justify-center">
-          <Doughnut v-if="accountTypeData.labels.length" :data="accountTypeData" :options="accountChartOptions" />
-          <p v-else class="text-sy-400 text-xl flex items-center justify-center h-full">Loading Account Data...</p>
-        </div>
-      </div>
-
-      <!-- Recent Activity -->
-      <div class="bg-sy-800 p-6 rounded-xl shadow-lg">
-        <h2 class="text-xl font-semibold text-sy-300 mb-4">Recent Activity</h2>
-        <ul class="space-y-3">
-          <li v-if="latestAccountCreationMessage" class="flex items-center justify-between p-3 bg-sy-700 rounded-lg hover:bg-sy-600 transition-colors duration-200">
-            <p class="text-sy-200">{{ latestAccountCreationMessage }}</p>
-            <span class="text-sm text-sy-400">Recently</span>
-          </li>
-          <li v-if="latestTransactionMessage" class="flex items-center justify-between p-3 bg-sy-700 rounded-lg hover:bg-sy-600 transition-colors duration-200">
-            <p class="text-sy-200">{{ latestTransactionMessage }}</p>
-            <span class="text-sm text-sy-400">Recently</span>
-          </li>
-          <li v-if="latestUnapprovedUserMessage" class="flex items-center justify-between p-3 bg-sy-700 rounded-lg hover:bg-sy-600 transition-colors duration-200">
-            <p class="text-sy-200">{{ latestUnapprovedUserMessage }}</p>
-            <span class="text-sm text-sy-400">Recently</span>
-          </li>
-          <li v-if="!latestAccountCreationMessage && !latestTransactionMessage && !latestUnapprovedUserMessage" class="text-sy-400 text-center p-3">
-            No recent activity to display.
-          </li>
-        </ul>
-      </div>
-    </main>
-  </div>
-</template>
-
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
@@ -197,7 +141,59 @@ onMounted(async () => {
 
 </script>
 
-<style scoped>
-/* Styles specific to AdminEmployeeDashboard can be added here if needed */
-</style>
 
+<template>
+  <div class="flex min-h-screen bg-gradient-to-br from-sy-900 to-sy-700 text-white">
+    <Sidebar :router="router" :user="user" :role="role" />
+    <main class="flex-1 p-8 flex flex-col h-dvh overflow-y-auto">
+      <h1 class="text-4xl font-bold mb-10 text-sy-100">Welcome, {{ user.firstName }}!</h1>
+
+      <!-- Summary Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+        <div v-for="card in summaryCards" :key="card.title"
+             class="bg-sy-800 p-6 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300 cursor-pointer hover:bg-sy-700 transform hover:-translate-y-1"
+             @click="handleCardClick(card.navigation)">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-semibold text-sy-300">{{ card.title }}</h2>
+            <img :src="card.icon" alt="" class="w-8 h-8 opacity-70" />
+          </div>
+          <p class="text-3xl font-bold text-sy-50">{{ card.value }}</p>
+        </div>
+      </div>
+
+      <!-- Charts Section -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
+        <div class="bg-sy-800 p-6 rounded-xl shadow-lg min-h-[300px] lg:min-h-[400px] flex flex-col justify-center">
+          <Bar v-if="transactionTypeData.labels.length" :data="transactionTypeData" :options="transactionChartOptions" />
+          <p v-else class="text-sy-400 text-xl flex items-center justify-center h-full">Loading Transaction Data...</p>
+        </div>
+        <div class="bg-sy-800 p-6 rounded-xl shadow-lg min-h-[300px] lg:min-h-[400px] flex flex-col justify-center">
+          <Doughnut v-if="accountTypeData.labels.length" :data="accountTypeData" :options="accountChartOptions" />
+          <p v-else class="text-sy-400 text-xl flex items-center justify-center h-full">Loading Account Data...</p>
+        </div>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="bg-sy-800 p-6 rounded-xl shadow-lg">
+        <h2 class="text-xl font-semibold text-sy-300 mb-4">Recent Activity</h2>
+        <ul class="space-y-3">
+          <li v-if="latestAccountCreationMessage" class="flex items-center justify-between p-3 bg-sy-700 rounded-lg hover:bg-sy-600 transition-colors duration-200">
+            <p class="text-sy-200">{{ latestAccountCreationMessage }}</p>
+            <span class="text-sm text-sy-400">Recently</span>
+          </li>
+          <li v-if="latestTransactionMessage" class="flex items-center justify-between p-3 bg-sy-700 rounded-lg hover:bg-sy-600 transition-colors duration-200">
+            <p class="text-sy-200">{{ latestTransactionMessage }}</p>
+            <span class="text-sm text-sy-400">Recently</span>
+          </li>
+          <li v-if="latestUnapprovedUserMessage" class="flex items-center justify-between p-3 bg-sy-700 rounded-lg hover:bg-sy-600 transition-colors duration-200">
+            <p class="text-sy-200">{{ latestUnapprovedUserMessage }}</p>
+            <span class="text-sm text-sy-400">Recently</span>
+          </li>
+          <li v-if="!latestAccountCreationMessage && !latestTransactionMessage && !latestUnapprovedUserMessage" class="text-sy-400 text-center p-3">
+            No recent activity to display.
+          </li>
+        </ul>
+      </div>
+    </main>
+  </div>
+</template>

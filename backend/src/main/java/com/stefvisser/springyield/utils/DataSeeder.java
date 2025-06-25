@@ -26,6 +26,7 @@ public class DataSeeder {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final Faker faker;
     private final List<Transaction> generatedTransactions = new ArrayList<>();
+    private final org.iban4j.Iban.Builder ibanBuilder;
 
     public DataSeeder(UserService userService, TransactionService transactionService) {
         this.userService = userService;
@@ -33,6 +34,7 @@ public class DataSeeder {
 
         this.faker = new Faker(new Locale("nl", "NL"));
         this.bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        this.ibanBuilder = new Iban.Builder().countryCode(CountryCode.NL).bankCode("SPYD");
     }
 
     @PostConstruct
@@ -114,14 +116,16 @@ public class DataSeeder {
     private List<User> generateFakeUsers(int count) {
         List<User> fakeUsers = new ArrayList<>();
         List<String> generatedIbans = new ArrayList<>();
+        String password = bCryptPasswordEncoder.encode("pass");
 
         for (int i = 1; i <= count; i++) {
             String firstName = faker.name().firstName();
             String lastName = faker.name().lastName();
+            String randomNumbers = String.format("%03d", faker.number().numberBetween(100, 999));
             String email = firstName.toLowerCase() + "." +
                     lastName.toLowerCase() +
+                    randomNumbers +
                     "@gmail.com";
-            String password = bCryptPasswordEncoder.encode("pass");
             String iban = getRandomIban();
 
             generatedIbans.add(iban);
@@ -168,11 +172,11 @@ public class DataSeeder {
         account.setBalanceLimit(BigDecimal.valueOf(faker.number().randomDouble(2, -1000, 0)));
         account.setStatus(AccountStatus.ACTIVE); // Set all newly created accounts as active
 
-        if (faker.number().numberBetween(0, 100) < 70) {
+        if (faker.number().numberBetween(0, 100) < 50)
             account.setAccountType(AccountType.PAYMENT);
-        } else {
+        else
             account.setAccountType(AccountType.SAVINGS);
-        }
+
         return account;
     }
 
@@ -217,9 +221,13 @@ public class DataSeeder {
     }
 
     public String getRandomIban() {
+        // Generate 4 random uppercase letters for the bank code
+        String randomBankCode = faker.regexify("[A-Z]{4}");
         return new Iban.Builder()
-                .countryCode(CountryCode.NL).bankCode("SPYD")
-                .buildRandom().toFormattedString();
+                .countryCode(CountryCode.NL)
+                .bankCode(randomBankCode)
+                .buildRandom()
+                .toFormattedString();
     }
 
     private void createAtmsUser() {
@@ -234,9 +242,12 @@ public class DataSeeder {
                 new ArrayList<>() // Initialize accounts list
         );
 
+        // Create a specific builder for ATMS accounts with different bank code
+        Iban.Builder atmsIbanBuilder = new Iban.Builder().countryCode(CountryCode.NL).bankCode("ATMS");
+
         // Create ATMS account using constructor directly
         Account atmsAccount = new Account(null, atmsUser,
-                new Iban.Builder().countryCode(CountryCode.NL).bankCode("ATMS").buildRandom().toFormattedString(),
+                atmsIbanBuilder.buildRandom().toFormattedString(),
                 java.time.LocalDate.now(), AccountType.PAYMENT,
                 new BigDecimal("10000000.00"), new BigDecimal("5000000.00"), new BigDecimal("999999999.99"),
                 new BigDecimal("-1000000.00"), AccountStatus.ACTIVE, new ArrayList<>());

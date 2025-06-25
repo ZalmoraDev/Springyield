@@ -62,30 +62,6 @@ onMounted(async () => {
   // No data fetching here, that's handled by child components
   isLoading.value = false;
 });
-
-const approveMyselfDemo = async () => {
-  // This function is not used in the current implementation
-  // It can be removed or implemented as needed
-  console.log('Approve Myself Demo function called');
-
-  try {
-    await axios.put(
-        `${API_BASE_URL}/user/${props.user.userId}/approve`,
-        {
-          dailyLimit: 1000,
-          absoluteLimit: 5000
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${props.token}`
-          }
-        }
-    )
-    emit('approve-success', props.user)
-  } catch (err) {
-    emit('approve-error', err.response?.data?.message || 'Failed to approve user.')
-  }
-};
 </script>
 
 
@@ -109,10 +85,6 @@ const approveMyselfDemo = async () => {
               class="mt-8 bg-white hover:bg-gray-200 text-sy-700 font-bold py-2 px-6 rounded-lg shadow-md cursor-pointer">
         Logout
       </button>
-<!--      <button @click="approveMyselfDemo"-->
-<!--              class="mt-8 bg-white hover:bg-gray-200 text-sy-700 font-bold py-2 px-6 rounded-lg shadow-md cursor-pointer">-->
-<!--        Approve Myself-->
-<!--      </button>-->
     </div>
 
 
