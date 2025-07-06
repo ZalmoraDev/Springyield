@@ -1,5 +1,5 @@
 <h1>
-   <img src="./frontend/public/logo/logo-w.svg" alt="Springyield Logo" width="" height="30">
+   <img src="./frontend/public/logo/logo-w.svg" alt="Springyield Logo" style="height: 30px; width: auto;">
    Springyield
 </h1>
 
