@@ -13,6 +13,7 @@
 played a major role ℹ️ Clone instead of fork: original repo had exposed credentials outside .gitignore 👤 Major project
 member: [@Hellaweird](https://github.com/Hellaweird)
 
+Requires partial rewrite, on the To-Do list :)
 ## Project Overview
 
 This application provides a digital banking platform with features for both customers and administrators. The system is
