@@ -7,13 +7,14 @@
 ![Java](https://img.shields.io/badge/java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
 ![SpringBoot](https://img.shields.io/badge/springboot-72b545?style=for-the-badge&logo=springboot&logoColor=white)
 ![TailwindCSS](https://img.shields.io/badge/tailwindcss-38B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white)
-![Vue.js](https://img.shields.io/badge/vuejs-35495e.svg?style=for-the-badge&logo=vuedotjs&logoColor=%234FC08D)
-![Docker](https://img.shields.io/badge/docker-0db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)<br>
-💰 Online Banking Application 🌿 Built with Java Spring Boot & Vue.js ✨ Created as part of a school group project, where I
-played a major role ℹ️ Clone instead of fork: original repo had exposed credentials outside .gitignore 👤 Major project
+![Docker](https://img.shields.io/badge/docker-0db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
+![H2](https://img.shields.io/badge/h2database-09476B.svg?style=for-the-badge&logo=h2database&logoColor=white)
+![Vue.js](https://img.shields.io/badge/vuejs-35495e.svg?style=for-the-badge&logo=vuedotjs&logoColor=%234FC08D)<br>
+
+💰 Online Banking Application 🌿 Java Spring Boot, Vue.js & H2 ✨ Created as part of a school group project, where I
+played a major role ℹ️ Clone instead of fork: original repo had exposed credentials outside `.gitignore` 👤 Major project
 member: [@Hellaweird](https://github.com/Hellaweird)
 
-Requires partial rewrite, on the To-Do list :)
 ## Project Overview
 
 This application provides a digital banking platform with features for both customers and administrators. The system is
